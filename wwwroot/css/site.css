@@ -1,14 +1,137 @@
-html {
-  font-size: 14px;
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
 }
 
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+}
+
+h3 {
+  font-size: 1.2375rem;
+  color: #fff;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+}
+
+li {
+  list-style: none;
+}
+main {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.35s ease-in-out;
+}
+
+/* Layout skeleton */
+
+.wrapper {
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+#sidebar {
+  width: 100px;
+  min-width: 100px;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  background-color: #f5f5f5;
+}
+#sidebar .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+#sidebar .sidebar-link span {
+  display: none;
+}
+#sidebar .sidebar-item {
+  margin: 15px 0;
+  text-align: center;
+}
+#sidebar .sidebar-link {
+  display: flex;
+}
+#sidebar .sidebar-link img {
+  height: 100%;
+}
+#sidebar .sidebar-item.active .sidebar-link .bg-redusmp {
+  background-color: rgba(213, 0, 0, 0.7);
+}
+#sidebar .sidebar-link span {
+  color: #111;
+  font-weight: bolder;
+}
+
+/* Sidebar collapse */
+
+#sidebar.expand {
+  width: 220px;
+  min-width: 220px;
+}
+#sidebar.expand span {
+  display: inline-block;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+#toggle-btn {
+  background-color: transparent;
+  cursor: pointer;
+  border: 0;
+  padding: 1rem 1.5rem;
+  width: 100%;
+}
+#toggle-btn i {
+  font-size: 1.5rem;
+}
+
+.round-border {
+  height: 45px;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  border: 0px solid #111;
+  border-radius: 25px;
+}
+.bg-redusmp {
+  background-color: #fff;
+}
 @media (min-width: 768px) {
+  .content {
+    width: auto;
+  }
   html {
     font-size: 16px;
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+html {
+  font-size: 14px;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -19,4 +142,99 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+.img-logo-header {
+  margin-left: 10px;
+  width: 40px;
+}
+.nav-bar-bgprimary {
+  background-color: #f5f5f5;
+}
+.font-p {
+  font-size: 15px;
+}
+.font-span {
+  font-size: 10px;
+}
+.perfil-div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.perfil-div .img {
+  display: flex;
+  width: 50px;
+  align-items: center;
+}
+.perfil-div .parrafo {
+  display: flex;
+  width: 150px;
+  align-items: center;
+}
+.p-home__bg-primary {
+  border: none;
+  background-color: rgba(213, 0, 0, 0.7);
+  color: #fff;
+}
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+  box-shadow: none;
+}
+.btn-check:focus + &,
+&:focus {
+  outline: 0;
+  box-shadow: none;
+}
+.p-home__img-card {
+  width: 100%;
+}
+.p-home__color-primary {
+  color: rgba(213, 0, 0, 0.7) !important;
+  font-weight: bolder !important;
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Botón que despliega el contenido */
+.dropdown-btn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Estilo para el contenido desplegable */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  right: 0rem;
+  top: 4rem;
+}
+
+/* Estilo para el enlace dentro del dropdown */
+.dropdown-content a {
+  color: rgba(213, 0, 0, 0.7) !important;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Muestra el contenido cuando se hace clic */
+.dropdown-container.show .dropdown-content {
+  display: block;
+}
+
+.bg-fia {
+  background-image: url("../images/banner.jpeg");
+  height: 100%;
 }
