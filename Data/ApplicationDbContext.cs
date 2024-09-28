@@ -9,4 +9,5 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+    public DbSet<USMPWEB.Models.Login> DataHome { get;set;}
 }

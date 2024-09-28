@@ -1,15 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - USMPWEB</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-   <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/USMPWEB.styles.css" asp-append-version="true" />
     <link rel="shortcut icon" href="~/ico/favicon_USMP.png" asp-append-version="true" />
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm nav-bar-bgprimary border-bottom box-shadow">
@@ -18,40 +21,52 @@
                     <img alt="USMP FIA" class="img-fluid img-logo-header" src="~/images/logo-header.png">
                 </a>
                 <div>
-                <p class="font-p mb-0">Universidad San Martin de Porres</p>
-                <span class="font-span">7:33 PM - 1 de Septiembre del 2024</span>
+                    <p class="font-p mb-0">Universidad San Martin de Porres</p>
+                    <span class="font-span">7:33 PM - 1 de Septiembre del 2024</span>
                 </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                     @* <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                    <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </li>
                     </ul> *@
-                        <div class="perfil-div">
-                            <div class="img">
-                                <img style="height: 40px;" src="~/images/personas/1.png" alt="">
-                            </div>
-                            <div class="parrafo">
-                                <p class="mt-0 mb-0">Angel Aaron Arturo Palomino Falcon </p>
-                            </div>
-                            <div class="dropdown-container">
+
+                    <div>
+                        <a asp-controller="Login" asp-action="Index">
+                            <button class="btnlog">
+                                Iniciar Sesión
+                            </button>
+                        </a>
+
+                        <button class="btnlog">
+                            Registrate
+                        </button>
+                    </div>
+                    <div class="perfil-div">
+                        <div class="img">
+                            <img style="height: 40px;" src="~/images/personas/1.png" alt="">
+                        </div>
+                        <div class="parrafo">
+                            <p class="mt-0 mb-0">Angel Aaron Arturo Palomino Falcon </p>
+                        </div>
+                        <div class="dropdown-container">
                             <button id="dropdown-btn" class="dropdown-btn">
-                              <i class="lni lni-chevron-down"></i> 
+                                <i class="lni lni-chevron-down"></i>
                             </button>
                             <div id="dropdown-content" class="dropdown-content">
                                 <a href="/Account/Logout">Cerrar sesión</a>
                             </div>
                         </div>
-                            
-                        </div>
-                        
+
+                    </div>
+
                     @* <partial name="_LoginPartial" /> *@
                 </div>
             </div>
@@ -59,101 +74,101 @@
     </header>
 
     <div class="wrapper">
-    <aside id="sidebar">
-        <div class="d-flex">
-        <button id="toggle-btn" type="button">
-            <i class="lni lni-menu"></i>
-        </button>
-        </div>
-        <ul class="sidebar-nav">
-            <li class="sidebar-item active">
-                <a  asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-link">
-                    <div class="round-border bg-redusmp">
-                    <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/home-icon.svg">
-                    </div>
-                    <span>Campañas</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a asp-area="" asp-controller="Inscripciones" asp-action="Index" class="sidebar-link">
-                    <div class="round-border bg-redusmp">
-                    <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/calendario-icon.svg">
-                    </div>
-                    <span>Inscripciones</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="" class="sidebar-link">
-                   <div class="round-border bg-redusmp">
-                    <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/certificate-icon.svg">
-                    </div>
-                    <span>Certificados</span>
-                </a>
-            </li>
-             <li class="sidebar-item">
-                <a href="" class="sidebar-link">
-                    <div class="round-border bg-redusmp">
-                    <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/network-icon.svg">
-                    </div>
-                    <span>Comunidad</span>
-                </a>
-            </li>
-        </ul>
-    </aside>
-    
+        <aside id="sidebar">
+            <div class="d-flex">
+                <button id="toggle-btn" type="button">
+                    <i class="lni lni-menu"></i>
+                </button>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item active">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-link">
+                        <div class="round-border bg-redusmp">
+                            <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/home-icon.svg">
+                        </div>
+                        <span>Campañas</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a asp-area="" asp-controller="Inscripciones" asp-action="Index" class="sidebar-link">
+                        <div class="round-border bg-redusmp">
+                            <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/calendario-icon.svg">
+                        </div>
+                        <span>Inscripciones</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="" class="sidebar-link">
+                        <div class="round-border bg-redusmp">
+                            <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/certificate-icon.svg">
+                        </div>
+                        <span>Certificados</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="" class="sidebar-link">
+                        <div class="round-border bg-redusmp">
+                            <img alt="USMP FIA" class="img-fluid img-logo-usmp" src="~/images/network-icon.svg">
+                        </div>
+                        <span>Comunidad</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
-    
+
     </div>
 
-    
+
 
     <footer class="border-top footer text-muted">
         <div class="container">
             @* &copy; 2024 - USMPWEB - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
             <div class="row">
                 <div class="col-md-2">
-                  <ul>
-                    <li>Institutos Academicos</li>
-                    <li>Centro de Idiomas</li>
-                  </ul>
+                    <ul>
+                        <li>Institutos Academicos</li>
+                        <li>Centro de Idiomas</li>
+                    </ul>
                 </div>
-                 <div class="col-md-2">
+                <div class="col-md-2">
                     <ul>
                         <li>USMP VIRTUAL</li>
                         <li>BIBLIOTECA CENTRAL</li>
                     </ul>
                 </div>
-                 <div class="col-md-2">
+                <div class="col-md-2">
                     <ul>
                         <li>NOTICIAS USMP</li>
                         <li>DIRECTORIO USMP</li>
                     </ul>
                 </div>
-                 <div class="col-md-2">
+                <div class="col-md-2">
                     <ul>
                         <li>BOLSA DE TRABAJO</li>
                         <li>POLITICA DE PRIVACIDAD</li>
                     </ul>
                 </div>
-                 <div class="col-md-2">
+                <div class="col-md-2">
                     <li>TRANSPARENCIA</li>
-                        <li>LIBRO DE RECLAMACIONES</li>
+                    <li>LIBRO DE RECLAMACIONES</li>
                 </div>
-                 <div class="col-md-2">
+                <div class="col-md-2">
                     <div class="row">
                         <div class="col-md-6">
-                               <i class="lni lni-facebook"></i> 
+                            <i class="lni lni-facebook"></i>
                         </div>
                         <div class="col-md-6">
-                                 <i class="lni lni-instagram"></i> 
-                        </div>
-                         <div class="col-md-6">
-                                 <i class="lni lni-youtube"></i> 
+                            <i class="lni lni-instagram"></i>
                         </div>
                         <div class="col-md-6">
-                                 <i class="lni lni-twitter"></i> 
+                            <i class="lni lni-youtube"></i>
+                        </div>
+                        <div class="col-md-6">
+                            <i class="lni lni-twitter"></i>
                         </div>
                     </div>
                 </div>
@@ -165,4 +180,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
