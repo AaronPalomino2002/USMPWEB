@@ -222,6 +222,94 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.Alumnos", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Apellidos")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DNI")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Facultad")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombres")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_alumnos");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Certificados", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateOnly>("FechaExpedicion")
+                        .HasColumnType("date");
+
+                    b.Property<string>("NombreCertificado")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_certificados");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Eventos", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateOnly>("FechaFin")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("FechaInicio")
+                        .HasColumnType("date");
+
+                    b.Property<string>("NombreEvento")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_eventos");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Inscripciones", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Alumno")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Culminado")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Proceso")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_inscripciones");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.Login", b =>
                 {
                     b.Property<long>("Id")
@@ -239,6 +327,25 @@ namespace USMPWEB.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("t_login");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Talleres", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Modalidad")
+                        .HasColumnType("text");
+
+                    b.Property<string>("NombreTaller")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("t_talleres");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

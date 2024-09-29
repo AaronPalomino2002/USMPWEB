@@ -10,4 +10,11 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
     public DbSet<USMPWEB.Models.Login> DataHome { get;set;}
+    public DbSet<USMPWEB.Models.Alumnos> DataAlumnos { get;set;}
+    public DbSet<USMPWEB.Models.Inscripciones> DataInscripciones { get;set;}
+    public DbSet<USMPWEB.Models.Eventos> DataEventos { get;set;}
+    public DbSet<USMPWEB.Models.Talleres> DataTalleres { get;set;}
+    public DbSet<USMPWEB.Models.Certificados> DataCertificados { get;set;}
+
+
 }

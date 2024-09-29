@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace USMPWEB.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class MigracionRepositorio1PostGresSQL : Migration
+    public partial class MigracionUsmpPostGresSQL : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,66 @@ namespace USMPWEB.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "t_alumnos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nombres = table.Column<string>(type: "text", nullable: true),
+                    Apellidos = table.Column<string>(type: "text", nullable: true),
+                    DNI = table.Column<string>(type: "text", nullable: true),
+                    Facultad = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_t_alumnos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "t_certificados",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    NombreCertificado = table.Column<string>(type: "text", nullable: true),
+                    FechaExpedicion = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_t_certificados", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "t_eventos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    NombreEvento = table.Column<string>(type: "text", nullable: true),
+                    FechaInicio = table.Column<DateOnly>(type: "date", nullable: false),
+                    FechaFin = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_t_eventos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "t_inscripciones",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Alumno = table.Column<string>(type: "text", nullable: true),
+                    Proceso = table.Column<string>(type: "text", nullable: true),
+                    Culminado = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_t_inscripciones", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "t_login",
                 columns: table => new
                 {
@@ -63,6 +123,20 @@ namespace USMPWEB.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_t_login", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "t_talleres",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    NombreTaller = table.Column<string>(type: "text", nullable: true),
+                    Modalidad = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_t_talleres", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -228,7 +302,22 @@ namespace USMPWEB.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "t_alumnos");
+
+            migrationBuilder.DropTable(
+                name: "t_certificados");
+
+            migrationBuilder.DropTable(
+                name: "t_eventos");
+
+            migrationBuilder.DropTable(
+                name: "t_inscripciones");
+
+            migrationBuilder.DropTable(
                 name: "t_login");
+
+            migrationBuilder.DropTable(
+                name: "t_talleres");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
