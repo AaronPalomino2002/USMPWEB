@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using USMPWEB.Models; // Importar el modelo
+using USMPWEB.Data; // Importar el contexto de la base de datos
 
 namespace USMPWEB.Controllers
 {
@@ -12,10 +9,12 @@ namespace USMPWEB.Controllers
     public class ContactoController : Controller
     {
         private readonly ILogger<ContactoController> _logger;
+        private readonly ApplicationDbContext _context; // Inyectar el DbContext
 
-        public ContactoController(ILogger<ContactoController> logger)
+        public ContactoController(ILogger<ContactoController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet("Registro")]
@@ -25,14 +24,29 @@ namespace USMPWEB.Controllers
         }
 
         [HttpPost("Registro")]
-        public IActionResult RegistroPost(string Nombre, string Correo, int Celular ,string Comentario)
+        public async Task<IActionResult> RegistroPost(string Nombre, string Correo, int Celular, string Comentario)
         {
             if (ModelState.IsValid)
             {
-                // Procesar los datos recibidos
-                return RedirectToAction("Muchas Gracias"); // Redireccionar a otra página o acción
+                // Crear una nueva instancia del modelo Contacto
+                var nuevoContacto = new Contacto
+                {
+                    Nombre = Nombre,
+                    Correo = Correo,
+                    Celular = Celular,
+                    Comentario = Comentario
+                };
+
+                // Agregar a la base de datos
+                _context.DataContacto.Add(nuevoContacto);
+                await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
+
+                // Redirigir a la misma página del formulario para limpiar los campos
+                return RedirectToAction("Registro");
             }
-            return View();
+
+            // Si el modelo no es válido, simplemente devolver la vista con los errores
+            return View("Registro");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

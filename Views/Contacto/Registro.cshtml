@@ -1,3 +1,5 @@
+@model USMPWEB.Models.Contacto
+
 @{
     ViewData["Title"] = "Contacto";
 }
@@ -9,26 +11,27 @@
 <div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-md-6">
-            <form class="formulario p-4" style="background-color: #f7f7f7; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
+            <!-- Formulario vinculado al modelo de Contacto -->
+            <form asp-controller="Contacto" asp-action="RegistroPost" method="post" class="formulario p-4" style="background-color: #f7f7f7; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);">
                 <div class="form-group">
                     <label for="Nombre" style="font-weight: bold;">Nombre</label>
-                    <input type="text" class="form-control" id="Nombre" placeholder="Ingresar nombre" style="border-radius: 5px;">
+                    <input type="text" asp-for="Nombre" class="form-control" id="Nombre" placeholder="Ingresar nombre" style="border-radius: 5px;" required />
                 </div>
                 <div class="form-group">
                     <label for="Correo" style="font-weight: bold;">Correo</label>
-                    <input type="email" class="form-control" id="Correo" placeholder="Ingresar correo" style="border-radius: 5px;">
+                    <input type="email" asp-for="Correo" class="form-control" id="Correo" placeholder="Ingresar correo" style="border-radius: 5px;" required />
                 </div>
                 <div class="form-group">
                     <label for="Celular" style="font-weight: bold;">Celular</label>
-                    <input type="text" class="form-control" id="Celular" placeholder="Ingresar número de celular" style="border-radius: 5px;">
+                    <input type="text" asp-for="Celular" class="form-control" id="Celular" placeholder="Ingresar número de celular" style="border-radius: 5px;" required />
                 </div>
                 <div class="form-group">
                     <label for="Comentario" style="font-weight: bold;">Comentario</label>
-                    <textarea class="form-control" id="Comentario" rows="4" placeholder="Ingresar mensaje" style="border-radius: 5px;"></textarea>
+                    <textarea asp-for="Comentario" class="form-control" id="Comentario" rows="4" placeholder="Ingresar mensaje" style="border-radius: 5px;" required></textarea>
                 </div>
 
                 <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="terms">
+                    <input type="checkbox" class="form-check-input" id="terms" required />
                     <label class="form-check-label" for="terms">Yo acepto los <a href="#" style="color: #ff0033; text-decoration: none;">Términos y Condiciones</a></label>
                 </div>
                 <button type="submit" class="btn btn-danger btn-block" style="background-color: #ff0033; border-radius: 50px; font-size: 1.2em; padding: 10px 20px;">Enviar</button>
