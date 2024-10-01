@@ -41,6 +41,10 @@
       "PackagePath": "staticwebassets\\ico\\voley.png"
     },
     {
+      "Id": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\wwwroot\\images\\banner.jpeg",
+      "PackagePath": "staticwebassets\\images\\banner.jpeg"
+    },
+    {
       "Id": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\wwwroot\\images\\calendario-icon.svg",
       "PackagePath": "staticwebassets\\images\\calendario-icon.svg"
     },

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "KbIZI6T1fELsDtVxorRGCug77XpYvQ9AcNmwg8j3/DY=",
+  "Hash": "Wjf3rV0C3e02eMusmO3Lo3zrCGhziLcwLOIEokqA7sw=",
   "Source": "USMPWEB",
   "BasePath": "_content/USMPWEB",
   "Mode": "Default",
@@ -1364,6 +1364,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\ico\\voley.png"
+    },
+    {
+      "Identity": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\wwwroot\\images\\banner.jpeg",
+      "SourceId": "USMPWEB",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\wwwroot\\",
+      "BasePath": "_content/USMPWEB",
+      "RelativePath": "images/banner.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\banner.jpeg"
     },
     {
       "Identity": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\wwwroot\\images\\calendario-icon.svg",
