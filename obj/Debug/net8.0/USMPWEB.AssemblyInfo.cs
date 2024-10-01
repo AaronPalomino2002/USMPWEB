@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("USMPWEB")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f0f3553b60b880aa35bf876558e002a56ed86628")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8285496f1136f6b51b5c2035f4cdcf81ed46691")]
 [assembly: System.Reflection.AssemblyProductAttribute("USMPWEB")]
 [assembly: System.Reflection.AssemblyTitleAttribute("USMPWEB")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
