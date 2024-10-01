@@ -65,6 +65,10 @@
       "PackagePath": "staticwebassets\\images\\chevron-down.svg"
     },
     {
+      "Id": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\images\\contacto-icon.png",
+      "PackagePath": "staticwebassets\\images\\contacto-icon.png"
+    },
+    {
       "Id": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\images\\home-icon.svg",
       "PackagePath": "staticwebassets\\images\\home-icon.svg"
     },

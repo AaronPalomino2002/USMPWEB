@@ -15,6 +15,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<USMPWEB.Models.Eventos> DataEventos { get;set;}
     public DbSet<USMPWEB.Models.Talleres> DataTalleres { get;set;}
     public DbSet<USMPWEB.Models.Certificados> DataCertificados { get;set;}
-
-
+    public DbSet<USMPWEB.Models.Contacto> DataContacto { get;set;}
 }
