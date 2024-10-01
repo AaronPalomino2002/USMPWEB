@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "5BCouryU6r73BKYkwVAZDj1DFQtrnWNZLfvPH6r2Tz0=",
+  "Hash": "aVk73LwnKfTkZ+Av8etlgMriPp5G1KS2PxK9c1WapDI=",
   "Source": "USMPWEB",
   "BasePath": "_content/USMPWEB",
   "Mode": "Default",
@@ -1478,6 +1478,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\chevron-down.svg"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\images\\contacto-icon.png",
+      "SourceId": "USMPWEB",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\",
+      "BasePath": "_content/USMPWEB",
+      "RelativePath": "images/contacto-icon.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\contacto-icon.png"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\images\\home-icon.svg",
