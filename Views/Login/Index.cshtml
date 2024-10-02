@@ -27,12 +27,23 @@
             border-radius: 10px;
             padding: 20px;
             max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <h2 class="text-center mb-4">Acceso para docentes y estudiantes</h2>
+
+       @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger text-center">@ViewBag.ErrorMessage</div>
+        }
+        
         <form asp-controller="Login" asp-action="Index" method="post">
             <div class="mb-3">
                 <input type="email" class="form-control" id="email" name="email" placeholder="Ingresa con los datos de tu correo institucional" required>
