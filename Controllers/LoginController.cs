@@ -1,18 +1,18 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
+using USMPWEB.Data; // Asegúrate de que apunte a tu DbContext
+using USMPWEB.Models; // Donde tengas la clase Login
 
 namespace USMPWEB.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
-        public LoginController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public LoginController(ApplicationDbContext context)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
+            _context = context;
         }
 
         [HttpGet]
@@ -22,14 +22,14 @@ namespace USMPWEB.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(string email, string password)
+        public async Task<IActionResult> Index(string correo, string password)
         {
-            // Intenta iniciar sesión con el usuario
-            var result = await _signInManager.PasswordSignInAsync(email, password, isPersistent: false, lockoutOnFailure: false);
+            // Busca al usuario por correo y contraseña en tu tabla 'login'
+            var user = _context.DataHome.SingleOrDefault(u => u.Correo == correo && u.Password == password);
 
-            if (result.Succeeded)
+            if (user != null)
             {
-                // Redirigir a la página principal o dashboard
+                // Usuario encontrado, puedes redirigir al Home o Dashboard
                 return RedirectToAction("Index", "Home");
             }
 
