@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using USMPWEB.Data; // Asegúrate de que apunte a tu DbContext
-using USMPWEB.Models; // Donde tengas la clase Login
+using USMPWEB.Models; // Donde tengas la clase Login y el modelo de registro
 
 namespace USMPWEB.Controllers
 {
@@ -36,6 +36,46 @@ namespace USMPWEB.Controllers
             // Si el inicio de sesión falla
             ViewBag.ErrorMessage = "Correo o contraseña incorrectos";
             return View();
+        }
+
+        // Acción para mostrar el formulario de registro
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        // Acción para procesar el registro de un nuevo usuario
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Verificar si ya existe un usuario con el mismo correo
+                var existingUser = _context.DataHome.SingleOrDefault(u => u.Correo == model.Correo);
+                if (existingUser != null)
+                {
+                    // Ya existe un usuario con ese correo
+                    ViewBag.ErrorMessage = "Este correo ya está registrado.";
+                    return View(model);
+                }
+
+                // Crear una nueva instancia de la entidad Login con los datos de registro
+                var newUser = new Login
+                {
+                    Correo = model.Correo,
+                    Password = model.Password
+                };
+
+                // Guardar en la tabla de 'login'
+                _context.DataHome.Add(newUser);
+                await _context.SaveChangesAsync();
+
+                // Redirigir al login o a una página de confirmación
+                return RedirectToAction("Index", "Login");
+            }
+
+            return View(model);
         }
     }
 }
