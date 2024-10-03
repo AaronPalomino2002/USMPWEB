@@ -1,4 +1,4 @@
-﻿@{
+@{
   ViewData["Title"] = "USMP";
 }
 
@@ -14,48 +14,47 @@
     <div class="row mb-3">
       <div class="col-md-3 mb-2">
         <div class="input-group">
-          <span style="padding: 0.725rem 1rem" class="input-group-text"><i
-              class="lni lni-search-alt p-home__color-primary"></i></span>
-          <input style="border-left: none" type="text" class="form-control" placeholder="Buscar en campañas" />
+          <span style="padding: 0.725rem 1rem" class="input-group-text"><i class="lni lni-search-alt p-home__color-primary"></i></span>
+          <input id="searchInput" style="border-left: none" type="text" class="form-control" placeholder="Buscar en campañas" />
         </div>
       </div>
       <div class="col-md-2 mb-2">
-        <select class="form-control">
-          <option>Ordenar por</option>
+        <select id="sortSelect" class="form-control">
+          <option value="">Ordenar por</option>
         </select>
       </div>
       <div class="col-md-2 mb-2">
-        <select class="form-control">
-          <option>Fecha</option>
-          <option>Urgente</option>
-          <option>Desde ayer</option>
-          <option>Ultimos 3 dias</option>
-          <option>Ultima Semana</option>
+        <select id="dateSelect" class="form-control">
+          <option value="">Fecha</option>
+          <option value="urgente">Urgente</option>
+          <option value="desdeAyer">Desde ayer</option>
+          <option value="ultimos3Dias">Últimos 3 días</option>
+          <option value="ultimaSemana">Última Semana</option>
         </select>
       </div>
       <div class="col-md-2 mb-2">
-        <select class="form-control">
-          <option>Todas las categorías</option>
-          <option>Niños y jóvenes</option>
-          <option>Educación</option>
-          <option>Salud</option>
-          <option>Otros</option>
+        <select id="categorySelect" class="form-control">
+          <option value="">Todas las categorías</option>
+          <option value="ninosJovenes">Niños y jóvenes</option>
+          <option value="educacion">Educación</option>
+          <option value="salud">Salud</option>
+          <option value="otros">Otros</option>
         </select>
       </div>
       <div class="col-md-2 mb-2">
-        <select class="form-control">
-          <option>Carrera</option>
-          <option>Todo</option>
-          <option>Psicología</option>
-          <option>Contabilidad</option>
-          <option>Diseño gráfico</option>
-          <option>Ingeniera Computacion y Sistemas</option>
+        <select id="careerSelect" class="form-control">
+          <option value="">Carrera</option>
+          <option value="todo">Todo</option>
+          <option value="psicologia">Psicología</option>
+          <option value="contabilidad">Contabilidad</option>
+          <option value="disenoGrafico">Diseño gráfico</option>
+          <option value="ingenieraComputacion">Ingeniera Computacion y Sistemas</option>
         </select>
       </div>
     </div>
-    <!-- USMP FIA-->
-    <div class="row">
-      <div class="col-md-6 mb-2">
+    <!-- Campañas -->
+    <div class="row" id="campaignContainer">
+      <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion" data-date="ultimaSemana" data-career="ingenieraComputacion">
         <div class="card">
           <div class="row no-gutters nav-bar-bgprimary">
             <div class="col-md-4">
@@ -85,8 +84,9 @@
           </div>
         </div>
       </div>
-      <!-- USMP MEDICINA-->
-      <div class="col-md-6 mb-2">
+      <!-- Repetir div de campaña para cada campaña, agregando los atributos data adecuados -->
+      <!-- Ejemplo de otra campaña -->
+      <div class="col-md-6 mb-2 campaign" data-title="Gestión del Talento Humano - Incorporación" data-category="educacion" data-date="desdeAyer" data-career="psicologia">
         <div class="card">
           <div class="row no-gutters nav-bar-bgprimary">
             <div class="col-md-4">
@@ -114,180 +114,49 @@
           </div>
         </div>
       </div>
-      <!-- USMP FIA-->
-      <div class="col-md-6 mb-2">
-        <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/FIA/vision.jpg" class="p-home__img-card" alt="Imagen de convocatoria"/>
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">IA: Construyendo la Humanidad 2.0</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Niños y Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/salud.png">Tecnología</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Conferencia dirigido Profesionales, estudiantes e investigadores vinculados a los temas de negocios, sostenibilidad, ciencias, tecnologías, mejora de procesos y actividades afines.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- USMP MEDICINA-->
-      <div class="col-md-6 mb-2">
-        <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/Medicina/jornadaMedi.jpg" class="p-home__img-card" alt="Imagen de convocatoria" style="height: 300px;"/>
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Jornada de Investigación en Salud</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educación</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/salud.png">Salud</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Una jornada para compartir avances y proyectos innovadores en el campo de la salud.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- USMP FIA-->
-      <div class="col-md-6 mb-2">
-        <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/FIA/innovacionTecno.jpg" class="p-home__img-card" alt="Imagen de convocatoria" />
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Conferencia de Innovación Tecnológica</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes y Adultos</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/innovacion.png">Tecnología e Innovación</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                   Evento enfocado en los últimos desarrollos en tecnología e innovación.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- USMP MEDICINA-->
-      <div class="col-md-6 mb-2">
-        <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/Medicina/simsonio.jpg" class="p-home__img-card" alt="Imagen de convocatoria" style="height: 280px;"/>
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Simposio de Cardiología</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/salud.png">Salud</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Últimos avances en el tratamiento y diagnóstico de enfermedades cardiovasculares.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- USMP FIA-->
-      <div class="col-md-6 mb-2">
-        <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/FIA/hackaton.jpg" class="p-home__img-card" alt="Imagen de convocatoria" />
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Hackathon de Innovación 2024</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Niños y Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/competencia.png">Competencia y Diversión</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Competencia para desarrollar soluciones innovadoras a problemas actuales.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- USMP MEDICINA-->
-      <div class="col-md-6 mb-2">
-        <div class="card" style="margin-block-end: 60px;">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/Medicina/eticaMe.png" class="p-home__img-card" alt="Imagen de convocatoria" style="height: 280px;"/>
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Seminario de Ética Médica</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Niños y Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/salud.png">Salud</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Estudiantes de 9no ciclo en adelante y/o egresados en Psicología.
-                </p>
-                <div class="d-flex">
-                  <button class="btn ms-auto mt-4 p-home__bg-primary">Conocer más detalles</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Agrega más campañas aquí -->
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const searchInput = document.getElementById('searchInput');
+  const sortSelect = document.getElementById('sortSelect');
+  const dateSelect = document.getElementById('dateSelect');
+  const categorySelect = document.getElementById('categorySelect');
+  const careerSelect = document.getElementById('careerSelect');
+  const campaignContainer = document.getElementById('campaignContainer');
+
+  function filterCampaigns() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const selectedDate = dateSelect.value;
+    const selectedCategory = categorySelect.value;
+    const selectedCareer = careerSelect.value;
+
+    const campaigns = campaignContainer.getElementsByClassName('campaign');
+    Array.from(campaigns).forEach(campaign => {
+      const title = campaign.dataset.title.toLowerCase();
+      const category = campaign.dataset.category;
+      const date = campaign.dataset.date;
+      const career = campaign.dataset.career;
+
+      const matchesSearch = title.includes(searchTerm);
+      const matchesDate = !selectedDate || date === selectedDate;
+      const matchesCategory = !selectedCategory || category === selectedCategory;
+      const matchesCareer = !selectedCareer || career === selectedCareer;
+
+      if (matchesSearch && matchesDate && matchesCategory && matchesCareer) {
+        campaign.style.display = '';
+      } else {
+        campaign.style.display = 'none';
+      }
+    });
+  }
+
+  searchInput.addEventListener('input', filterCampaigns);
+  dateSelect.addEventListener('change', filterCampaigns);
+  categorySelect.addEventListener('change', filterCampaigns);
+  careerSelect.addEventListener('change', filterCampaigns);
+});
+</script>
