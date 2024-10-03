@@ -133,10 +133,6 @@
       "PackagePath": "staticwebassets\\images\\personas\\1.png"
     },
     {
-      "Id": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\js\\login.js",
-      "PackagePath": "staticwebassets\\js\\login.js"
-    },
-    {
       "Id": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

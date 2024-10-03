@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "/14Pq1lZ3Nt7MUsDBp2qcRlFct9rbFNi1Mjn7GL4Rik=",
+  "Hash": "GQaThh64Xt+OgRXbsv195X7bPYC1mbr4rHlZ2m7V9UE=",
   "Source": "USMPWEB",
   "BasePath": "_content/USMPWEB",
   "Mode": "Default",
@@ -1801,25 +1801,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\personas\\1.png"
-    },
-    {
-      "Identity": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\js\\login.js",
-      "SourceId": "USMPWEB",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\",
-      "BasePath": "_content/USMPWEB",
-      "RelativePath": "js/login.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\login.js"
     },
     {
       "Identity": "C:\\Users\\user\\Desktop\\USMPWEB\\wwwroot\\js\\site.js",
