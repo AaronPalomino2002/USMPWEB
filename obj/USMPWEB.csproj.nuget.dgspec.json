@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Desktop\\USMPWEB\\USMPWEB.csproj": {}
+    "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\USMPWEB.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Desktop\\USMPWEB\\USMPWEB.csproj": {
+    "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\USMPWEB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Desktop\\USMPWEB\\USMPWEB.csproj",
+        "projectUniqueName": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\USMPWEB.csproj",
         "projectName": "USMPWEB",
-        "projectPath": "C:\\Users\\user\\Desktop\\USMPWEB\\USMPWEB.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Desktop\\USMPWEB\\obj\\",
+        "projectPath": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\USMPWEB.csproj",
+        "packagesPath": "C:\\Users\\aaron\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\aaron\\Desktop\\CURSO PROGRAMACION\\USMPWEB\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\aaron\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"

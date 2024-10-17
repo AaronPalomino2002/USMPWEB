@@ -230,3 +230,7 @@ C:\Users\user\Desktop\USMPWEB\obj\Debug\net8.0\USMPWEB.genruntimeconfig.cache
 C:\Users\user\Desktop\USMPWEB\obj\Debug\net8.0\ref\USMPWEB.dll
 C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Npgsql.dll
 C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Microsoft.OpenApi.dll
+C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\aaron\Desktop\CURSO PROGRAMACION\USMPWEB\bin\Debug\net8.0\Swashbuckle.AspNetCore.SwaggerUI.dll
