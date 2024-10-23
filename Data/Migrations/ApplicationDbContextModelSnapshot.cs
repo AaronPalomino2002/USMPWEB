@@ -222,29 +222,73 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("USMPWEB.Models.Alumnos", b =>
+            modelBuilder.Entity("USMPWEB.Models.Alumno", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApeMat")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApePat")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CarreraId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Celular")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Edad")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("LoginId")
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Apellidos")
+                    b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("DNI")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Facultad")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nombres")
+                    b.Property<string>("NumMatricula")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LoginId");
+
                     b.ToTable("t_alumnos");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Carrera", b =>
+                {
+                    b.Property<long>("IdCarrera")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("IdCarrera"));
+
+                    b.Property<long?>("FacultadIdFacultad")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("nomCarrera")
+                        .HasColumnType("text");
+
+                    b.HasKey("IdCarrera");
+
+                    b.HasIndex("FacultadIdFacultad");
+
+                    b.ToTable("t_carrera");
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Certificados", b =>
@@ -313,6 +357,22 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("t_eventos");
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.Facultad", b =>
+                {
+                    b.Property<long>("IdFacultad")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("IdFacultad"));
+
+                    b.Property<string>("nomFacultad")
+                        .HasColumnType("text");
+
+                    b.HasKey("IdFacultad");
+
+                    b.ToTable("t_facultad");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.Inscripciones", b =>
                 {
                     b.Property<long>("Id")
@@ -352,6 +412,50 @@ namespace USMPWEB.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("t_login");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.RegisterViewModel", b =>
+                {
+                    b.Property<string>("numMatricula")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CarreraId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Celular")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Correo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Edad")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("apeMat")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("apePat")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("numMatricula");
+
+                    b.ToTable("DataRegistro");
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Talleres", b =>
@@ -422,6 +526,26 @@ namespace USMPWEB.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Alumno", b =>
+                {
+                    b.HasOne("USMPWEB.Models.Login", "Login")
+                        .WithMany()
+                        .HasForeignKey("LoginId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Login");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.Carrera", b =>
+                {
+                    b.HasOne("USMPWEB.Models.Facultad", "Facultad")
+                        .WithMany()
+                        .HasForeignKey("FacultadIdFacultad");
+
+                    b.Navigation("Facultad");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using Microsoft.EntityFrameworkCore; // Para trabajar con Entity Framework
 using System.Linq;
 using System.Threading.Tasks;
 using USMPWEB.Data; // Asegúrate de que apunte a tu DbContext
@@ -24,12 +28,30 @@ namespace USMPWEB.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(string correo, string password)
         {
-            // Busca al usuario por correo y contraseña en tu tabla 'login'
-            var user = _context.DataHome.SingleOrDefault(u => u.Correo == correo && u.Password == password);
+            // Busca al alumno por correo y contraseña en la tabla 'alumnos'
+            var alumno = await _context.DataAlumnos
+                .Include(a => a.Login) // Asegúrate de incluir la relación con Login
+                .SingleOrDefaultAsync(a => a.Correo == correo && a.Login.Password == password); // Usa la relación
 
-            if (user != null)
+            if (alumno != null)
             {
-                // Usuario encontrado, puedes redirigir al Home o Dashboard
+                // Usuario encontrado, puedes autenticar al usuario
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, alumno.Nombre + " " + alumno.ApePat + " " + alumno.ApeMat), // Puedes modificar esto según tus necesidades
+                   
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true, // Puedes cambiar esto según tus necesidades
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Tiempo de expiración
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                // Redirigir al Home o Dashboard
                 return RedirectToAction("Index", "Home");
             }
 
@@ -38,10 +60,17 @@ namespace USMPWEB.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home"); // Redirigir a la página principal después de cerrar sesión
+        }
+
         // Acción para mostrar el formulario de registro
         [HttpGet]
         public IActionResult Register()
         {
+            ViewBag.Carreras = _context.DataCarrera.ToList(); // Cargar las carreras para el select
             return View();
         }
 
@@ -52,29 +81,61 @@ namespace USMPWEB.Controllers
             if (ModelState.IsValid)
             {
                 // Verificar si ya existe un usuario con el mismo correo
-                var existingUser = _context.DataHome.SingleOrDefault(u => u.Correo == model.Correo);
+                var existingUser = await _context.DataAlumnos.SingleOrDefaultAsync(u => u.Correo == model.Correo);
                 if (existingUser != null)
                 {
                     // Ya existe un usuario con ese correo
                     ViewBag.ErrorMessage = "Este correo ya está registrado.";
+                    ViewBag.Carreras = _context.DataCarrera.ToList(); // Cargar las carreras
                     return View(model);
                 }
 
-                // Crear una nueva instancia de la entidad Login con los datos de registro
-                var newUser = new Login
+                try
                 {
-                    Correo = model.Correo,
-                    Password = model.Password
-                };
+                    // Crear una nueva instancia de la entidad Login con los datos de registro
+                    var newUser = new Login
+                    {
+                        Correo = model.Correo,
+                        Password = model.Password // Considera encriptar la contraseña antes de guardarla
+                    };
 
-                // Guardar en la tabla de 'login'
-                _context.DataHome.Add(newUser);
-                await _context.SaveChangesAsync();
+                    // Guardar en la tabla de 'login'
+                    _context.DataHome.Add(newUser);
+                    await _context.SaveChangesAsync(); // Guarda primero el login para obtener el ID
 
-                // Redirigir al login o a una página de confirmación
-                return RedirectToAction("Index", "Login");
+                    // Crear una nueva instancia de la entidad Alumno
+                    var newAlumno = new Alumno
+                    {
+                        NumMatricula = model.numMatricula,
+                        Nombre = model.Nombre,
+                        ApePat = model.apePat,
+                        ApeMat = model.apeMat,
+                        Correo = model.Correo,
+                        Edad = model.Edad,
+                        Celular = model.Celular,
+                        CarreraId = model.CarreraId,
+                        // Establecer la relación con el Login
+                        Login = newUser // Asocia el nuevo Login
+                    };
+
+                    // Guardar en la tabla de 'alumnos'
+                    _context.DataAlumnos.Add(newAlumno);
+                    await _context.SaveChangesAsync();
+
+                    // Redirigir al login o a una página de confirmación
+                    return RedirectToAction("Index", "Login");
+                }
+                catch (Exception ex)
+                {
+                    // Log o manejar el error
+                    ViewBag.ErrorMessage = "Ocurrió un error al registrar el usuario: " + ex.Message;
+                    ViewBag.Carreras = _context.DataCarrera.ToList(); // Cargar las carreras
+                    return View(model);
+                }
             }
 
+            // Si el modelo no es válido, recargar las carreras
+            ViewBag.Carreras = _context.DataCarrera.ToList();
             return View(model);
         }
     }

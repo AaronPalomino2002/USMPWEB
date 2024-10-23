@@ -1,38 +1,46 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace USMPWEB.Models
 {
-     public class RegisterViewModel
-    {
-        [Required]
-        public string? Nombre { get; set; }
+   
+   public class RegisterViewModel
+{
+    [Key]
+    [Required]
+    public string numMatricula { get; set; }
 
-        [Required]
-        public string? Apellidos { get; set; }
+    [Required]
+    public string Nombre { get; set; }
 
-        [Required]
-        [EmailAddress]
-        public string? Correo { get; set; }
+    [Required]
+    public string apePat { get; set; }
 
-        [Required]
-        [Range(18, 100, ErrorMessage = "La edad debe estar entre 18 y 100 años")]
-        public int Edad { get; set; }
+    [Required]
+    public string apeMat { get; set; }
 
-        [Required]
-        [Phone]
-        public string? Celular { get; set; }
+    [Required]
+    public string Correo { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        public string? Password { get; set; }
+    [Required]
+    public int Edad { get; set; }
 
-        [Required]
-        [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Las contraseñas no coinciden")]
-        public string? ConfirmPassword { get; set; }
-    }
+    [Required]
+    public string Celular { get; set; }
+
+    [Required]
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    [DataType(DataType.Password)]
+    [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
+    public string ConfirmPassword { get; set; }
+
+    public int CarreraId { get; set; }
+}
+
 }
