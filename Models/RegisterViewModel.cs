@@ -12,33 +12,33 @@ namespace USMPWEB.Models
 {
     [Key]
     [Required]
-    public string numMatricula { get; set; }
+    public string? numMatricula { get; set; }
 
     [Required]
-    public string Nombre { get; set; }
+    public string? Nombre { get; set; }
 
     [Required]
-    public string apePat { get; set; }
+    public string? apePat { get; set; }
 
     [Required]
-    public string apeMat { get; set; }
+    public string? apeMat { get; set; }
 
     [Required]
-    public string Correo { get; set; }
+    public string? Correo { get; set; }
 
     [Required]
     public int Edad { get; set; }
 
     [Required]
-    public string Celular { get; set; }
+    public string? Celular { get; set; }
 
     [Required]
     [DataType(DataType.Password)]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     [DataType(DataType.Password)]
     [Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
-    public string ConfirmPassword { get; set; }
+    public string? ConfirmPassword { get; set; }
 
     public int CarreraId { get; set; }
 }

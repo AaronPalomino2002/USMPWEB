@@ -13,6 +13,7 @@ namespace USMPWEB.Controllers
     public class LoginController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private const string ADMIN_EMAIL = "juan@usmp.pe";
 
         public LoginController(ApplicationDbContext context)
         {
@@ -39,7 +40,9 @@ namespace USMPWEB.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, alumno.Nombre + " " + alumno.ApePat + " " + alumno.ApeMat), // Puedes modificar esto según tus necesidades
-                   
+                    // Agregar un claim para identificar si es admin
+                    new Claim("IsAdmin", (correo == ADMIN_EMAIL).ToString())
+
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -52,6 +55,10 @@ namespace USMPWEB.Controllers
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 // Redirigir al Home o Dashboard
+                if (correo == ADMIN_EMAIL)
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
                 return RedirectToAction("Index", "Home");
             }
 
