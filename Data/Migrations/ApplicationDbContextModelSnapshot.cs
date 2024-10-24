@@ -231,39 +231,35 @@ namespace USMPWEB.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApeMat")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ApePat")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("CarreraId")
-                        .HasColumnType("integer");
+                    b.Property<long>("CarreraId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Celular")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Correo")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Edad")
                         .HasColumnType("integer");
 
-                    b.Property<long>("LoginId")
+                    b.Property<long?>("LoginId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Nombre")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("NumMatricula")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CarreraId");
 
                     b.HasIndex("LoginId");
 
@@ -427,7 +423,6 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ConfirmPassword")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Correo")
@@ -530,11 +525,17 @@ namespace USMPWEB.Data.Migrations
 
             modelBuilder.Entity("USMPWEB.Models.Alumno", b =>
                 {
-                    b.HasOne("USMPWEB.Models.Login", "Login")
+                    b.HasOne("USMPWEB.Models.Carrera", "Carrera")
                         .WithMany()
-                        .HasForeignKey("LoginId")
+                        .HasForeignKey("CarreraId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("USMPWEB.Models.Login", "Login")
+                        .WithMany()
+                        .HasForeignKey("LoginId");
+
+                    b.Navigation("Carrera");
 
                     b.Navigation("Login");
                 });
