@@ -26,7 +26,7 @@ namespace USMPWEB.Controllers
         public async Task<IActionResult> Index()
         {
              // Llamada a la API para obtener campañas
-            var e_inscripciones = await _httpClient.GetFromJsonAsync<EventosInscripciones[]>("http://localhost:5265/api/eventosinscripciones");
+            var e_inscripciones = await _httpClient.GetFromJsonAsync<EventosInscripciones[]>("http://localhost:5260/api/EventosInscripciones");
             ViewData["EventosInscripciones"] = e_inscripciones; // Pasar las campañas a la vista
 
             return View();

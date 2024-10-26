@@ -26,7 +26,7 @@ namespace USMPWEB.Controllers
 
         public async Task<IActionResult> Index()
         {
-             var certificados = await _httpClient.GetFromJsonAsync<Certificados[]>("http://localhost:5265/api/certificados");
+             var certificados = await _httpClient.GetFromJsonAsync<Certificados[]>("http://localhost:5260/api/Certificados");
             ViewData["Certificados"] = certificados; // Pasar las campañas a la vista
 
             return View();

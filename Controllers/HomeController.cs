@@ -24,7 +24,7 @@ namespace USMPWEB.Controllers
             ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
 
             // Llamada a la API para obtener campañas
-            var campanas = await _httpClient.GetFromJsonAsync<Campanas[]>("http://localhost:5265/api/campanas");
+            var campanas = await _httpClient.GetFromJsonAsync<Campanas[]>("http://localhost:5260/api/Campanas");
             ViewData["Campanas"] = campanas; // Pasar las campañas a la vista
 
             return View();
