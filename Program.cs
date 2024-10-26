@@ -7,6 +7,9 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configura explícitamente el ambiente
+builder.Environment.EnvironmentName = "Production";
+
 // Configura la conexión a la base de datos
 var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection") 
     ?? throw new InvalidOperationException("Connection string 'PostgreSQLConnection' not found.");
