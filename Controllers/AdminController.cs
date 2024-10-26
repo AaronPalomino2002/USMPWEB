@@ -265,5 +265,230 @@ namespace USMPWEB.Controllers
 
             return RedirectToAction(nameof(Campanas));
         }
+        [HttpGet]
+        public async Task<IActionResult> Inscripciones()
+        {
+            if (!User.Identity.IsAuthenticated ||
+                User.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value != "True")
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var inscripciones = await _context.DataInscripciones
+                .OrderByDescending(i => i.Id)
+                .ToListAsync();
+
+            return View(inscripciones);
+        }
+
+        [HttpGet]
+        public IActionResult CrearInscripcion()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearInscripcion(Inscripciones inscripcion)
+        {
+            try
+            {
+                _context.DataInscripciones.Add(inscripcion);
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = "Inscripción creada correctamente";
+                return RedirectToAction(nameof(Inscripciones));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al crear la inscripción: " + ex.Message;
+                return View(inscripcion);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarInscripcion(long id)
+        {
+            var inscripcion = await _context.DataInscripciones
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (inscripcion == null)
+            {
+                return NotFound();
+            }
+
+            return View(inscripcion);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarInscripcion(long id, Inscripciones inscripcion)
+        {
+            if (id != inscripcion.Id)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var inscripcionExistente = await _context.DataInscripciones
+                    .FirstOrDefaultAsync(i => i.Id == id);
+
+                if (inscripcionExistente == null)
+                {
+                    return NotFound();
+                }
+
+                inscripcionExistente.Alumno = inscripcion.Alumno;
+                inscripcionExistente.Proceso = inscripcion.Proceso;
+                inscripcionExistente.Culminado = inscripcion.Culminado;
+
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = "Inscripción actualizada correctamente";
+                return RedirectToAction(nameof(Inscripciones));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar la inscripción: " + ex.Message;
+                return View(inscripcion);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarInscripcion(long id)
+        {
+            try
+            {
+                var inscripcion = await _context.DataInscripciones
+                    .FirstOrDefaultAsync(i => i.Id == id);
+
+                if (inscripcion == null)
+                {
+                    TempData["Error"] = "Inscripción no encontrada";
+                    return RedirectToAction(nameof(Inscripciones));
+                }
+
+                _context.DataInscripciones.Remove(inscripcion);
+                await _context.SaveChangesAsync();
+
+                TempData["Mensaje"] = "Inscripción eliminada correctamente";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al eliminar la inscripción: " + ex.Message;
+                _logger.LogError(ex, "Error al eliminar inscripción ID: {Id}", id);
+            }
+
+            return RedirectToAction(nameof(Inscripciones));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Certificados()
+        {
+            if (!User.Identity.IsAuthenticated ||
+                User.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value != "True")
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var certificados = await _context.DataCertificados
+                .OrderByDescending(c => c.FechaExpedicion)
+                .ToListAsync();
+
+            return View(certificados);
+        }
+
+        [HttpGet]
+        public IActionResult CrearCertificado()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearCertificado(Certificados certificado)
+        {
+            try
+            {
+                _context.DataCertificados.Add(certificado);
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = "Certificado creado correctamente";
+                return RedirectToAction(nameof(Certificados));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al crear el certificado: " + ex.Message;
+                return View(certificado);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarCertificado(long id)
+        {
+            var certificado = await _context.DataCertificados
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (certificado == null)
+            {
+                return NotFound();
+            }
+
+            return View(certificado);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarCertificado(long id, Certificados certificado)
+        {
+            if (id != certificado.Id)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var certificadoExistente = await _context.DataCertificados
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (certificadoExistente == null)
+                {
+                    return NotFound();
+                }
+
+                certificadoExistente.NombreCertificado = certificado.NombreCertificado;
+                certificadoExistente.FechaExpedicion = certificado.FechaExpedicion;
+
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = "Certificado actualizado correctamente";
+                return RedirectToAction(nameof(Certificados));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar el certificado: " + ex.Message;
+                return View(certificado);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EliminarCertificado(long id)
+        {
+            try
+            {
+                var certificado = await _context.DataCertificados
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (certificado == null)
+                {
+                    TempData["Error"] = "Certificado no encontrado";
+                    return RedirectToAction(nameof(Certificados));
+                }
+
+                _context.DataCertificados.Remove(certificado);
+                await _context.SaveChangesAsync();
+
+                TempData["Mensaje"] = "Certificado eliminado correctamente";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al eliminar el certificado: " + ex.Message;
+                _logger.LogError(ex, "Error al eliminar certificado ID: {Id}", id);
+            }
+
+            return RedirectToAction(nameof(Certificados));
+        }
     }
 }
