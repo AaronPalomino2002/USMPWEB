@@ -169,6 +169,96 @@ namespace USMPWEB.Controllers
 
             return View(campanas);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EventosInscripciones()
+        {
+            if (!User.Identity.IsAuthenticated ||
+                User.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value != "True")
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var e_inscripciones = await _context.DataEventosInscripciones
+                .Include(c => c.Categoria)
+                .Include(c => c.SubCategoria)
+                .OrderByDescending(c => c.FechaInicio)
+                .ToListAsync();
+
+            return View(e_inscripciones);
+        }
+
+        [HttpGet]
+            public IActionResult CrearEventoInscripciones()
+            {
+                // Cargar categorías y subcategorías desde la base de datos
+                var categorias = _context.DataCategoria.ToList();
+                var subCategorias = _context.DataSubCategoria.ToList();
+                
+                ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
+                ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
+                
+                return View();
+            }
+        
+
+            // Acción para mostrar el formulario de creación de campaña
+           [HttpGet]
+            public IActionResult CrearCampana()
+            {
+                // Cargar categorías y subcategorías desde la base de datos
+                var categorias = _context.DataCategoria.ToList();
+                var subCategorias = _context.DataSubCategoria.ToList();
+                
+                ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
+                ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
+                
+                return View();
+            }
+
+
+
+            // Acción para procesar la creación de una nueva campaña
+            [HttpPost]
+            public async Task<IActionResult> CrearCampana(Campanas campanas)
+            {
+                if (ModelState.IsValid)
+                {
+                    // Verificar si ya existe una campaña con el mismo título
+                    var existingCampana = await _context.DataCampanas.SingleOrDefaultAsync(c => c.Titulo == campanas.Titulo);
+                    if (existingCampana != null)
+                    {
+                        // Ya existe una campaña con ese título
+                        ViewBag.ErrorMessage = "Una campaña con este título ya existe.";
+                        ViewBag.Categorias = _context.DataCategoria.ToList(); // Cargar las categorías
+                        return View(campanas);
+                    }
+
+                    try
+                    {
+                        // Guardar en la tabla de 'campañas'
+                        _context.DataCampanas.Add(campanas);
+                        await _context.SaveChangesAsync();
+
+                        // Mensaje de éxito y redirección
+                        TempData["Mensaje"] = "Campaña creada correctamente.";
+                        return RedirectToAction(nameof(Campanas));
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log o manejo del error
+                        ViewBag.ErrorMessage = "Error al crear la campaña: " + ex.Message;
+                        ViewBag.Categorias = _context.DataCategoria.ToList(); // Cargar las categorías
+                        return View(campanas);
+                    }
+                }
+
+                // Si el modelo no es válido, recargar las categorías
+                ViewBag.Categorias = _context.DataCategoria.ToList();
+                return View(campanas);
+            }
+
+
         [HttpGet]
         public async Task<IActionResult> EditarCampana(int id)
         {
@@ -388,8 +478,11 @@ namespace USMPWEB.Controllers
             }
 
             var certificados = await _context.DataCertificados
+                .Include(c => c.Categoria)
+                .Include(c => c.SubCategoria)
                 .OrderByDescending(c => c.FechaExpedicion)
                 .ToListAsync();
+   
 
             return View(certificados);
         }

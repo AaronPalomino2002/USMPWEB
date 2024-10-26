@@ -1,6 +1,6 @@
 @model IEnumerable<USMPWEB.Models.Certificados>
 @{
-    ViewData["Title"] = "Gestión de Certificados";
+    ViewData["Title"] = "Certificados";
     Layout = null;
 }
 
@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestión de Certificados - USMP</title>
+    <title>Certificados - USMP</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
     <style>
@@ -67,6 +67,12 @@
             background-color: var(--primary-color);
             color: white;
         }
+        .campana-imagen {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +84,7 @@
                         <i class="lni lni-arrow-left"></i>
                         Volver al Panel
                     </a>
-                    <h1 class="h3 mb-0">Certificados Registrados</h1>
+                    <h1 class="h3 mb-0">Certificados</h1>
                 </div>
                 <a href="@Url.Action("CrearCertificado", "Admin")" class="btn-crear">
                     <i class="lni lni-plus"></i>
@@ -112,7 +118,13 @@
                         <tr>
                             <th>ID</th>
                             <th>Nombre del Certificado</th>
+                            <th>Descripcion</th>
                             <th>Fecha de Expedición</th>
+                            <th>Categoria</th>
+                            <th>Subcategoria</th>
+                            <th>Imagen</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -122,7 +134,18 @@
                             <tr>
                                 <td>@certificado.Id</td>
                                 <td>@certificado.NombreCertificado</td>
+                                <td>@certificado.Descripcion</td>
                                 <td>@certificado.FechaExpedicion.ToString("dd/MM/yyyy")</td>
+                                <td>@(certificado.Categoria?.nomCategoria ?? "No asignada")</td>
+                                <td>@(certificado.SubCategoria?.nomSubCategoria ?? "No asignada")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(certificado.Imagen))
+                                    {
+                                        <img src="@certificado.Imagen" alt="@certificado.NombreCertificado" class="campana-imagen">
+                                    }
+                                </td>
+                                <td>@certificado.FechaInicio.ToString("dd/MM/yyyy")</td>
+                                <td>@certificado.FechaFin.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     <div class="d-flex gap-2">
                                         <a href="@Url.Action("EditarCertificado", "Admin", new { id = certificado.Id })"

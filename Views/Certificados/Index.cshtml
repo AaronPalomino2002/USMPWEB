@@ -5,7 +5,7 @@
 <nav>
     <ol class="breadcrumb mt-3" style="margin-left: 1rem">
       <li class="breadcrumb-item"><a class="p-home__color-primary text-decoration-none" href="#">INICIO</a></li>
-      <li class="breadcrumb-item active" aria-current="page">INSCRIPCIONES</li>
+      <li class="breadcrumb-item active" aria-current="page">CERTIFICADOS</li>
     </ol>
   </nav>
 
@@ -17,7 +17,7 @@
             <span style="padding: 0.725rem 1rem" class="input-group-text"
               ><i class="lni lni-search-alt p-home__color-primary"></i
             ></span>
-            <input style="border-left: none" type="text" class="form-control" placeholder="Buscar en inscripciones" />
+            <input style="border-left: none" type="text" class="form-control" placeholder="Buscar en certificados" />
           </div>
         </div>
         <div class="col-md-2 mb-2">
@@ -56,19 +56,19 @@
       </div>
 
       <div class="row">
-         @if (ViewData["EventosInscripciones"] != null)
+         @if (ViewData["Certificados"] != null)
             {
-                var e_inscripciones = (EventosInscripciones[])ViewData["EventosInscripciones"];
+                var certificados = (Certificados[])ViewData["Certificados"];
                
-                    @foreach (var e_inscripcion in e_inscripciones)
+                    @foreach (var certificado in certificados)
                     { <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion" data-date="ultimaSemana" data-career="ingenieraComputacion">
                 <div class="row no-gutters nav-bar-bgprimary">
                         <div class="col-md-4">
-                            <img  src="@e_inscripcion.Imagen" class="p-home__img-card" alt="Imagen de @e_inscripcion.Titulo" />
+                            <img  src="@certificado.Imagen" class="p-home__img-card" alt="Imagen de @certificado.NombreCertificado" />
                         </div>
                         <div class="col-md-8">
                           <div class="card-body">
-                            <h6 class="card-title">@e_inscripcion.Titulo</h6>
+                            <h6 class="card-title">@certificado.NombreCertificado</h6>
                             <ul class="d-flex m-1 p-0">
                               <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
                                 <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
@@ -78,7 +78,7 @@
                                 <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología</li>
                             </ul>
                             <p class="card-text p-home__descrip mt-2">
-                              @e_inscripcion.Descripcion
+                              @certificado.Descripcion
                             </p>
                             <div class="d-flex">
                               <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">

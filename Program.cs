@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using USMPWEB.Data;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddControllers(); // Permitir solo controladores de API
 builder.Services.AddControllersWithViews(); // Para controladores MVC
 
+// ** Agregar IHttpClientFactory **
+builder.Services.AddHttpClient(); // <-- Agrega esta línea
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API",
+        Version = "v1",
+        Description = "Descripcion de la API"
+    });
+});
+
+
 var app = builder.Build();
 
 // Configura la tubería de solicitudes HTTP
@@ -49,13 +64,15 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.UseSwagger();
+app.UseSwaggerUI(c =>{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-// Usa autenticación y autorización
 app.UseAuthentication();
 app.UseAuthorization();
 

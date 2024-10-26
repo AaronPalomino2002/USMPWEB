@@ -1,0 +1,119 @@
+@model USMPWEB.Models.Campanas
+@{
+    ViewData["Title"] = "Crear Campana";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Campañas - USMP</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <style>
+        /* Usar los mismos estilos que en la vista principal */
+        :root {
+            --primary-color: #C8102E;
+        }
+
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .admin-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <a href="@Url.Action("Campanas", "Admin")" class="btn-back me-3">
+                    <i class="lni lni-arrow-left"></i>
+                    Volver
+                </a>
+                <h1 class="h3 mb-0">Nueva Campaña</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <form asp-action="CrearCampana" method="post">
+                <div class="mb-3">
+                    <label asp-for="Titulo" class="form-label">Titulo de la Campaña</label>
+                    <input asp-for="Titulo" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Descripcion" class="form-label">Descripcion</label>
+                    <input asp-for="Descripcion" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                    <select asp-for="CategoriaId" class="form-control" asp-items="@(new SelectList(ViewBag.Categoria, "IdCategoria", "nomCategoria"))">
+                        <option value="">Seleccione una categoría</option>
+                    </select>
+                    <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="subCategoriaId" class="form-label">Subcategoría</label>
+                    <select asp-for="subCategoriaId" class="form-control" asp-items="@(new SelectList(ViewBag.SubCategoria, "IdSubCategoria", "nomSubCategoria"))">
+                        <option value="">Seleccione una subcategoría</option>
+                    </select>
+                    <span asp-validation-for="subCategoriaId" class="text-danger"></span>
+                </div>
+
+
+                 <div class="mb-3">
+                    <label asp-for="Imagen" class="form-label">Ingrese url de la imagen</label>
+                    <input asp-for="Imagen" class="form-control" required />
+                </div>
+                 <div class="mb-3">
+                    <label asp-for="FechaInicio" class="form-label">Fecha de inicio</label>
+                    <input type="date" asp-for="FechaInicio" class="form-control" required />
+                </div> 
+                <div class="mb-3">
+                    <label asp-for="FechaFin" class="form-label">Fecha de inicio</label>
+                    <input type="date" asp-for="FechaFin" class="form-control" required />
+                </div>
+
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="@Url.Action("Campanas", "Admin")" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

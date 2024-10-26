@@ -9,15 +9,16 @@ using USMPWEB.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 
+
 namespace USMPWEB.Controllers
 {
    
-    public class InscripcionesController : Controller
+    public class CertificadosController : Controller
     {
-        private readonly ILogger<InscripcionesController> _logger;
+        private readonly ILogger<CertificadosController> _logger;
         private readonly HttpClient _httpClient;
 
-        public InscripcionesController(ILogger<InscripcionesController> logger,IHttpClientFactory httpClientFactory)
+        public CertificadosController(ILogger<CertificadosController> logger, IHttpClientFactory httpClientFactory)
         {
             _logger = logger;
             _httpClient = httpClientFactory.CreateClient();
@@ -25,9 +26,8 @@ namespace USMPWEB.Controllers
 
         public async Task<IActionResult> Index()
         {
-             // Llamada a la API para obtener campañas
-            var e_inscripciones = await _httpClient.GetFromJsonAsync<EventosInscripciones[]>("http://localhost:5265/api/eventosinscripciones");
-            ViewData["EventosInscripciones"] = e_inscripciones; // Pasar las campañas a la vista
+             var certificados = await _httpClient.GetFromJsonAsync<Certificados[]>("http://localhost:5265/api/certificados");
+            ViewData["Certificados"] = certificados; // Pasar las campañas a la vista
 
             return View();
         }

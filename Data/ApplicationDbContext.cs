@@ -21,4 +21,5 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<USMPWEB.Models.Campanas> DataCampanas{ get;set;}
     public DbSet<USMPWEB.Models.Categoria> DataCategoria{ get;set;}
     public DbSet<USMPWEB.Models.SubCategoria> DataSubCategoria{ get;set;}
+    public DbSet<USMPWEB.Models.EventosInscripciones> DataEventosInscripciones{ get;set;}
 }

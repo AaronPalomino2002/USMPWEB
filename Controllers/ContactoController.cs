@@ -49,10 +49,11 @@ namespace USMPWEB.Controllers
             return View("Registro");
         }
 
+        [HttpGet("error")] // Agregar este atributo
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View("Error!");
+            return View("Error!"); // Asegúrate de tener una vista llamada "Error"
         }
     }
 }

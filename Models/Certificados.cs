@@ -14,6 +14,18 @@ namespace USMPWEB.Models
         [Key]
         public long Id { get; set; }
         public string? NombreCertificado { get; set; }
+        public string? Descripcion { get; set; }
+        public long? CategoriaId { get; set; }
+        public string? Imagen { get; set; }
+        public long? subCategoriaId { get; set; }
+        public DateOnly FechaInicio { get; set; }
+        public DateOnly FechaFin { get; set; }
+        [ForeignKey("CategoriaId")]
+        public virtual Categoria? Categoria { get; set; }
+
+        [ForeignKey("subCategoriaId")]
+        public virtual SubCategoria? SubCategoria { get; set; }
         public DateOnly FechaExpedicion { get; set; }
     }
+    
 }

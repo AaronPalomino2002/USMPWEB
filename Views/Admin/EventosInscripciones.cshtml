@@ -1,0 +1,181 @@
+@model IEnumerable<USMPWEB.Models.EventosInscripciones>
+@{
+    ViewData["Title"] = "Gestión de Inscripciones";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Inscripciones - USMP</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #C8102E;
+        }
+
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .admin-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-crear {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .btn-crear:hover {
+            background-color: #a00d25;
+            color: white;
+        }
+
+        .btn-editar {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .btn-eliminar {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .campana-imagen {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <a href="@Url.Action("Index", "Admin")" class="btn-back">
+                        <i class="lni lni-arrow-left"></i>
+                        Volver al Panel
+                    </a>
+                    <h1 class="h3 mb-0">Inscripciones Registradas</h1>
+                </div>
+                <a href="@Url.Action("CrearEventoInscripcion", "Admin")" class="btn-crear">
+                    <i class="lni lni-plus"></i>
+                    Nuevo  Evento para Inscripción
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Mensaje"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="table-container">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titulo</th>
+                    <th>Descripción</th>
+                    <th>Vacantes</th>
+                    <th>Culminado</th>
+                    <th>Categoría</th>
+                    <th>Subcategoría</th>
+                    <th>Imagen</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e_inscripcion in Model)
+                {
+                    <tr>
+                        <td>@e_inscripcion.Id</td>
+                        <td>@e_inscripcion.Titulo</td>
+                        <td>@e_inscripcion.Descripcion</td>
+                        <td>@e_inscripcion.Vacantes</td>
+                        <td>@e_inscripcion.Culminado</td>
+                        <td>@(e_inscripcion.Categoria?.nomCategoria ?? "No asignada")</td>
+                        <td>@(e_inscripcion.SubCategoria?.nomSubCategoria ?? "No asignada")</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(e_inscripcion.Imagen))
+                            {
+                                <img src="@e_inscripcion.Imagen" alt="@e_inscripcion.Titulo" class="campana-imagen">
+                            }
+                        </td>
+                        <td>@e_inscripcion.FechaInicio.ToString("dd/MM/yyyy")</td>
+                        <td>@e_inscripcion.FechaFin.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span class="badge @(e_inscripcion.Culminado == "Si" ? "bg-success" : "bg-warning")">
+                                @(e_inscripcion.Culminado == "Si" ? "Culminado" : "En Proceso")
+                            </span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("EditarEventoInscripcion", "Admin", new { id = e_inscripcion.Id })" class="btn btn-sm btn-editar">
+                                    <i class="lni lni-pencil"></i>
+                                </a>
+                                <form asp-action="EliminarEventoInscripcion" asp-route-id="@e_inscripcion.Id" method="post" onsubmit="return confirm('¿Está seguro de eliminar esta inscripción? Esta acción no se puede deshacer.');">
+                                    <button type="submit" class="btn btn-sm btn-eliminar">
+                                        <i class="lni lni-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

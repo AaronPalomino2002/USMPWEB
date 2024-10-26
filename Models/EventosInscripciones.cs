@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 
 namespace USMPWEB.Models
 {
-    [Table("t_talleres")]
-    public class Talleres
+     [Table("t_eventosInscripciones")]
+    public class EventosInscripciones
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public long Id { get; set;}
-        public string? NombreTaller {get; set;}
-        public string? Modalidad {get; set;}
+         public string? Titulo {get; set;}
         public string? Descripcion { get; set; }
+        public string? Vacantes {get; set;}
+        public string? Culminado {get; set;}
         public long? CategoriaId { get; set; }
         public string? Imagen { get; set; }
         public long? subCategoriaId { get; set; }
