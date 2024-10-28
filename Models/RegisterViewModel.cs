@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace USMPWEB.Models
 {
-   
+    [Table("t_registro")]
    public class RegisterViewModel
 {
     [Key]

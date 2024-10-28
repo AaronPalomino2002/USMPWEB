@@ -99,6 +99,23 @@ namespace USMPWEB.Controllers
 
                 try
                 {
+                    var newRegistro = new RegisterViewModel
+                    {
+                        numMatricula = model.numMatricula,
+                        Nombre = model.Nombre,
+                        apePat = model.apePat,
+                        apeMat = model.apeMat,
+                        Correo = model.Correo,
+                        Edad = model.Edad,
+                        Celular = model.Celular,
+                        Password = model.Password,
+                        ConfirmPassword = model.ConfirmPassword,
+                        CarreraId = model.CarreraId,
+                    };
+                     // Guardar en la tabla de 'Registro'
+                    _context.DataRegistro.Add(newRegistro);
+                    await _context.SaveChangesAsync();
+
                     // Crear una nueva instancia de la entidad Login con los datos de registro
                     var newUser = new Login
                     {

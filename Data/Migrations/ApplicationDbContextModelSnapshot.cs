@@ -551,7 +551,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasKey("numMatricula");
 
-                    b.ToTable("DataRegistro");
+                    b.ToTable("t_registro");
                 });
 
             modelBuilder.Entity("USMPWEB.Models.SubCategoria", b =>
