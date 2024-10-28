@@ -83,7 +83,7 @@
                               @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
                                 Conocer más detalles
                               </button>  *@
-                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id })'" class="btn ms-auto mt-4 p-home__bg-primary">
+                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id, tipo="campana" })'" class="btn ms-auto mt-4 p-home__bg-primary">
                                   Conocer más detalles
                               </button>
                             </div>
