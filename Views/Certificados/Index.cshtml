@@ -81,8 +81,11 @@
                               @certificado.Descripcion
                             </p>
                             <div class="d-flex">
-                              <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
+                               @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
                                 Conocer más detalles
+                              </button>  *@
+                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = certificado.Id, tipo="certificados" })'" class="btn ms-auto mt-4 p-home__bg-primary">
+                                  Conocer más detalles
                               </button>
                             </div>
                           </div>
