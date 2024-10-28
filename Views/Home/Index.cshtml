@@ -54,37 +54,7 @@
     </div>
     
     <!-- Campañas -->
-    <div class="row" id="campaignContainer" style="margin-block-end: 70px;">
-      @*<div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion" data-date="ultimaSemana" data-career="ingenieraComputacion">
-         <div class="card">
-          <div class="row no-gutters nav-bar-bgprimary">
-            <div class="col-md-4">
-              <img src="~/images/campañas/FIA/fabriDi.jpg" class="p-home__img-card" alt="Imagen de convocatoria" />
-            </div>
-            <div class="col-md-8">
-              <div class="card-body">
-                <h6 class="card-title">Fabricación Digital Modelado 3D</h6>
-                <ul class="d-flex m-1 p-0">
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                  <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                    <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología</li>
-                </ul>
-                <p class="card-text p-home__descrip mt-2">
-                  Aprendizaje avanzado en las técnicas y herramientas de fabricación digital modelado en 3D.
-                </p>
-                <div class="d-flex">
-                  <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
-                    Conocer más detalles
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> *@
-
+    <div class="row" id="campaignContainer" style="height: 600px; overflow-y: auto; margin-block-end: 70px;">
         @if (ViewData["Campanas"] != null)
             {
                 var campanas = (Campanas[])ViewData["Campanas"];
@@ -110,8 +80,11 @@
                               @campana.Descripcion
                             </p>
                             <div class="d-flex">
-                              <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
+                              @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
                                 Conocer más detalles
+                              </button>  *@
+                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id })'" class="btn ms-auto mt-4 p-home__bg-primary">
+                                  Conocer más detalles
                               </button>
                             </div>
                           </div>
@@ -126,9 +99,6 @@
             }
 
       </div>
-      <!-- Repetir div de campaña para cada campaña, agregando los atributos data adecuados -->
-      <!-- Ejemplo de otra campaña -->
-      
 
     </div>
   </div>

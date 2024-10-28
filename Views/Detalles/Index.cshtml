@@ -1,13 +1,16 @@
+@model USMPWEB.Models.Campanas
+
 <div class="p-home">
   <div class="container-fluid">
     <div class="row">
       <div class="col-lg-4 left-section" style="padding-left: 0px">
-        <img style="width: 100%" src="~/images/campañas/campanas.jpg" alt="Program Image" />
+        <img style="width: 100%" src="@Model.Imagen" alt="Imagen de @Model.Titulo" alt="Program Image" />
       </div>
 
       <div class="col-lg-8">
-        <div class="row">
-          <div class="col-md-9">
+        <div class="row mt-4">
+            <h6>@Model.Titulo</h6>
+          <div class="col-md-9 align-content-center">
             <div class="content-imgs">
               <img style="width: 40px; height: 40px" src="~/ico/educacion.png" alt="role niños" />
               <img style="width: 40px; height: 40px" src="~/ico/voley.png"  alt="role niños" />
@@ -16,7 +19,7 @@
           </div>
           <div class="col-md-3">
             <button class="btn btn-primary ms-auto mt-4 p-home__bg-primary">Únete</button>
-            <p style="font-size: 11px">Cierre de Postulaciones en</p>
+            <p style="font-size: 11px">Cierre de Postulaciones </br> el @Model.FechaFin</p>
           </div>
         </div>
         <div style="margin-top: 2rem" class="card">
