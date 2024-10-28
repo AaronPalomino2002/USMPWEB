@@ -7,9 +7,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura explícitamente el ambiente
-builder.Environment.EnvironmentName = "Production";
-
 // Configura la conexión a la base de datos
 var connectionString = builder.Configuration.GetConnectionString("PostgreSQLConnection") 
     ?? throw new InvalidOperationException("Connection string 'PostgreSQLConnection' not found.");
@@ -41,9 +38,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddControllers(); // Permitir solo controladores de API
 builder.Services.AddControllersWithViews(); // Para controladores MVC
 
-// ** Agregar IHttpClientFactory **
-builder.Services.AddHttpClient(); // <-- Agrega esta línea
+// Agregar IHttpClientFactory
+builder.Services.AddHttpClient();
 
+// Configuración de Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -54,23 +52,24 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
 var app = builder.Build();
 
 // Configura la tubería de solicitudes HTTP
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+    });
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-app.UseSwagger();
-app.UseSwaggerUI(c =>{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

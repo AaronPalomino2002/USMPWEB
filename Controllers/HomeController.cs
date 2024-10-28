@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using USMPWEB.Models;
 
 namespace USMPWEB.Controllers
@@ -12,19 +13,21 @@ namespace USMPWEB.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient _httpClient;
+        private readonly string _apiBaseUrl;
 
-        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory)
+        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _logger = logger;
             _httpClient = httpClientFactory.CreateClient();
+            _apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL not found in configuration.");
         }
 
         public async Task<IActionResult> Index()
         {
             ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
 
-            // Llamada a la API para obtener campañas
-            var campanas = await _httpClient.GetFromJsonAsync<Campanas[]>("http://localhost:5260/api/Campanas");
+            // Llamada a la API usando la URL base configurada
+            var campanas = await _httpClient.GetFromJsonAsync<Campanas[]>($"{_apiBaseUrl}/Campanas");
             ViewData["Campanas"] = campanas; // Pasar las campañas a la vista
 
             return View();
