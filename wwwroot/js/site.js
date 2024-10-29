@@ -1,5 +1,11 @@
 ﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 // for details on configuring this project to bundle and minify static web assets.
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Expande el menú lateral al cargar la página
+  document.querySelector("#sidebar").classList.add("expand");
+});
+
 const menu = document.querySelector("#toggle-btn");
 menu.addEventListener("click", function () {
   document.querySelector("#sidebar").classList.toggle("expand");
