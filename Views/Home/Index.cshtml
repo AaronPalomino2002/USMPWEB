@@ -1,147 +1,127 @@
 @{
-  ViewData["Title"] = "USMP";
+    ViewData["Title"] = "USMP";
 }
 
-<nav>
-  <ol class="breadcrumb mt-3" style="margin-left: 1rem">
-    <li class="breadcrumb-item"><a class="p-home__color-primary text-decoration-none" href="#">INICIO</a></li>
-    <li class="breadcrumb-item active" aria-current="page">CAMPAÑAS</li>
-  </ol>
-</nav>
+@await Component.InvokeAsync("Breadcrumb")
 
 <div class="container-fluid mt-4">
-  <div class="col-m-12">
-    <div class="row mb-3">
-      <div class="col-md-3 mb-2">
-        <div class="input-group">
-          <span style="padding: 0.725rem 1rem" class="input-group-text"><i class="lni lni-search-alt p-home__color-primary"></i></span>
-          <input id="searchInput" style="border-left: none" type="text" class="form-control" placeholder="Buscar en campañas" />
-        </div>
-      </div>
-      <div class="col-md-2 mb-2">
-        <select id="sortSelect" class="form-control">
-          <option value="">Ordenar por</option>
-        </select>
-      </div>
-      <div class="col-md-2 mb-2">
-        <select id="dateSelect" class="form-control">
-          <option value="">Fecha</option>
-          <option value="urgente">Urgente</option>
-          <option value="desdeAyer">Desde ayer</option>
-          <option value="ultimos3Dias">Últimos 3 días</option>
-          <option value="ultimaSemana">Última Semana</option>
-        </select>
-      </div>
-      <div class="col-md-2 mb-2">
-        <select id="categorySelect" class="form-control">
-          <option value="">Todas las categorías</option>
-          <option value="ninosJovenes">Niños y jóvenes</option>
-          <option value="educacion">Educación</option>
-          <option value="salud">Salud</option>
-          <option value="otros">Otros</option>
-        </select>
-      </div>
-      <div class="col-md-2 mb-2">
-        <select id="careerSelect" class="form-control">
-          <option value="">Carrera</option>
-          <option value="todo">Todo</option>
-          <option value="psicologia">Psicología</option>
-          <option value="contabilidad">Contabilidad</option>
-          <option value="disenoGrafico">Diseño gráfico</option>
-          <option value="ingenieraComputacion">Ingeniera Computacion y Sistemas</option>
-        </select>
-      </div>
-    </div>
-    
-    <!-- Campañas -->
-    <div class="row containerdiv" id="campaignContainer">
-        @if (ViewData["Campanas"] != null)
+    <div class="col-m-12">
+        <form method="get" asp-action="Index" class="row mb-3">
+            <div class="col-md-3 mb-2">
+                <div class="input-group">
+                    <span style="padding: 0.725rem 1rem" class="input-group-text">
+                        <i class="lni lni-search-alt p-home__color-primary"></i>
+                    </span>
+                    <input name="searchTerm" style="border-left: none" type="text" class="form-control"
+                        placeholder="Buscar en campañas" value="@ViewData["CurrentSearch"]"/>
+                </div>
+            </div>
+            <div class="col-md-2 mb-2">
+                <select name="sortOrder" class="form-control">
+                    <option value="">Ordenar por</option>
+                    <option value="fecha_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_desc")">Más recientes</option>
+                    <option value="fecha_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_asc")">Más antiguos</option>
+                    <option value="titulo_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_desc")">Título Z-A</option>
+                    <option value="titulo_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_asc")">Título A-Z</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <select name="dateFilter" class="form-control">
+                    <option value="">Fecha</option>
+                    <option value="urgente" selected="@(ViewData["CurrentDate"]?.ToString() == "urgente")">Urgente</option>
+                    <option value="desdeAyer" selected="@(ViewData["CurrentDate"]?.ToString() == "desdeAyer")">Desde ayer</option>
+                    <option value="ultimos3Dias" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimos3Dias")">Últimos 3 días</option>
+                    <option value="ultimaSemana" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimaSemana")">Última Semana</option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <select name="categoryFilter" class="form-control">
+                    <option value="">Todas las categorías</option>
+                    @if (ViewData["Categorias"] != null)
+                    {
+                        foreach (var categoria in (IEnumerable<Categoria>)ViewData["Categorias"])
+                        {
+                            <option value="@categoria.IdCategoria" 
+                                    selected="@(ViewData["CurrentCategory"]?.ToString() == categoria.IdCategoria.ToString())">
+                                @categoria.nomCategoria
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <select name="careerFilter" class="form-control">
+                    <option value="">Carrera</option>
+                    <option value="todo">Todo</option>
+                    @if (ViewData["Carreras"] != null)
+                    {
+                        foreach (var carrera in (IEnumerable<Carrera>)ViewData["Carreras"])
+                        {
+                            <option value="@carrera.IdCarrera" 
+                                    selected="@(ViewData["CurrentCareer"]?.ToString() == carrera.IdCarrera.ToString())">
+                                @carrera.nomCarrera
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-1 mb-2">
+                <button type="submit" class="btn p-home__bg-primary">
+                    <i class="lni lni-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Campañas -->
+        <div class="row containerdiv">
+            @if (ViewData["Campanas"] != null)
             {
                 var campanas = (Campanas[])ViewData["Campanas"];
-               
-                    @foreach (var campana in campanas)
-                    { <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion" data-date="ultimaSemana" data-career="ingenieraComputacion">
-                <div class="row no-gutters nav-bar-bgprimary">
-                        <div class="col-md-4">
-                            <img  src="@campana.Imagen" class="p-home__img-card" alt="Imagen de @campana.Titulo" />
-                        </div>
-                        <div class="col-md-8">
-                          <div class="card-body">
-                            <h6 class="card-title">@campana.Titulo</h6>
-                            <ul class="d-flex m-1 p-0">
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología</li>
-                            </ul>
-                            <p class="card-text p-home__descrip mt-2">
-                              @campana.Descripcion
-                            </p>
-                            <div class="d-flex">
-                              @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
-                                Conocer más detalles
-                              </button>  *@
-                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id, tipo="campana" })'" class="btn ms-auto mt-4 p-home__bg-primary">
-                                  Conocer más detalles
-                              </button>
+
+                @foreach (var campana in campanas)
+                {
+                    <div class="col-md-6 mb-2">
+                        <div class="row no-gutters nav-bar-bgprimary">
+                            <div class="col-md-4">
+                                <img src="@campana.Imagen" class="p-home__img-card" alt="Imagen de @campana.Titulo" />
                             </div>
-                          </div>
-            </div>
-                </div>
-                </div>
-                    }
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h6 class="card-title">@campana.Titulo</h6>
+                                    <ul class="d-flex m-1 p-0">
+                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
+                                            style="border: 1px solid; border-radius: 25px;">
+                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes
+                                        </li>
+                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
+                                            style="border: 1px solid; border-radius: 25px;">
+                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion
+                                        </li>
+                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
+                                            style="border: 1px solid; border-radius: 25px;">
+                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología
+                                        </li>
+                                    </ul>
+                                    <p class="card-text p-home__descrip mt-2">
+                                        @campana.Descripcion
+                                    </p>
+                                    <div class="d-flex">
+                                        <button 
+                                            onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id, tipo="campana" })'"
+                                            class="btn ms-auto mt-4 p-home__bg-primary">
+                                            Conocer más detalles
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
             else
             {
                 <p>No se encontraron campañas.</p>
             }
-
-      </div>
-
+        </div>
     </div>
-  </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const searchInput = document.getElementById('searchInput');
-  const sortSelect = document.getElementById('sortSelect');
-  const dateSelect = document.getElementById('dateSelect');
-  const categorySelect = document.getElementById('categorySelect');
-  const careerSelect = document.getElementById('careerSelect');
-  const campaignContainer = document.getElementById('campaignContainer');
-
-  function filterCampaigns() {
-    const searchTerm = searchInput.value.toLowerCase();
-    const selectedDate = dateSelect.value;
-    const selectedCategory = categorySelect.value;
-    const selectedCareer = careerSelect.value;
-
-    const campaigns = campaignContainer.getElementsByClassName('campaign');
-    Array.from(campaigns).forEach(campaign => {
-      const title = campaign.dataset.title.toLowerCase();
-      const category = campaign.dataset.category;
-      const date = campaign.dataset.date;
-      const career = campaign.dataset.career;
-
-      const matchesSearch = title.includes(searchTerm);
-      const matchesDate = !selectedDate || date === selectedDate;
-      const matchesCategory = !selectedCategory || category === selectedCategory;
-      const matchesCareer = !selectedCareer || career === selectedCareer;
-
-      if (matchesSearch && matchesDate && matchesCategory && matchesCareer) {
-        campaign.style.display = '';
-      } else {
-        campaign.style.display = 'none';
-      }
-    });
-  }
-
-  searchInput.addEventListener('input', filterCampaigns);
-  dateSelect.addEventListener('change', filterCampaigns);
-  categorySelect.addEventListener('change', filterCampaigns);
-  careerSelect.addEventListener('change', filterCampaigns);
-});
-</script>
