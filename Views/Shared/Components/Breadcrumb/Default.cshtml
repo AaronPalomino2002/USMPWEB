@@ -1,0 +1,20 @@
+<!-- Views/Shared/Components/Breadcrumb/Default.cshtml -->
+@model List<USMPWEB.ViewComponents.BreadcrumbItem>
+
+<nav>
+    <ol class="breadcrumb mt-3" style="margin-left: 1rem">
+        @foreach (var item in Model)
+        {
+            if (item.Active)
+            {
+                <li class="breadcrumb-item active" aria-current="page">@item.Text</li>
+            }
+            else
+            {
+                <li class="breadcrumb-item">
+                    <a class="p-home__color-primary text-decoration-none" href="@item.Url">@item.Text</a>
+                </li>
+            }
+        }
+    </ol>
+</nav>

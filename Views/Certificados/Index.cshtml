@@ -1,104 +1,105 @@
 @{
-    ViewData["Title"] = "USMP";
+  ViewData["Title"] = "USMP";
 }
+@await Component.InvokeAsync("Breadcrumb")
 
-<nav>
-    <ol class="breadcrumb mt-3" style="margin-left: 1rem">
-      <li class="breadcrumb-item"><a class="p-home__color-primary text-decoration-none" href="#">INICIO</a></li>
-      <li class="breadcrumb-item active" aria-current="page">CERTIFICADOS</li>
-    </ol>
-  </nav>
 
-  <div class="container-fluid mt-4">
-    <div class="col-m-12">
-      <div class="row mb-3">
-        <div class="col-md-3 mb-2">
-          <div class="input-group">
-            <span style="padding: 0.725rem 1rem" class="input-group-text"
-              ><i class="lni lni-search-alt p-home__color-primary"></i
-            ></span>
-            <input style="border-left: none" type="text" class="form-control" placeholder="Buscar en certificados" />
-          </div>
-        </div>
-        <div class="col-md-2 mb-2">
-          <select class="form-control">
-            <option>Ordenar por</option>
-          </select>
-        </div>
-        <div class="col-md-2 mb-2">
-          <select class="form-control">
-            <option>Fecha</option>
-            <option>Urgente</option>
-            <option>Desde ayer</option>
-            <option>Ultimos 3 dias</option>
-            <option>Ultima Semana</option>
-          </select>
-        </div>
-        <div class="col-md-2 mb-2">
-          <select class="form-control">
-            <option>Todas las categorías</option>
-            <option>Niños y jóvenes</option>
-            <option>Educación</option>
-            <option>Salud</option>
-            <option>Otros</option>
-          </select>
-        </div>
-        <div class="col-md-2 mb-2">
-          <select class="form-control">
-            <option>Carrera</option>
-            <option>Todo</option>
-            <option>Psicología</option>
-            <option>Contabilidad</option>
-            <option>Diseño gráfico</option>
-            <option>Ingeniera Computacion y Sistemas</option>
-          </select>
+<div class="container-fluid mt-4">
+  <div class="col-m-12">
+    <div class="row mb-3">
+      <div class="col-md-3 mb-2">
+        <div class="input-group">
+          <span style="padding: 0.725rem 1rem" class="input-group-text"><i
+              class="lni lni-search-alt p-home__color-primary"></i></span>
+          <input style="border-left: none" type="text" class="form-control" placeholder="Buscar en certificados" />
         </div>
       </div>
-
-      <div class="row">
-         @if (ViewData["Certificados"] != null)
-            {
-                var certificados = (Certificados[])ViewData["Certificados"];
-               
-                    @foreach (var certificado in certificados)
-                    { <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion" data-date="ultimaSemana" data-career="ingenieraComputacion">
-                <div class="row no-gutters nav-bar-bgprimary">
-                        <div class="col-md-4">
-                            <img  src="@certificado.Imagen" class="p-home__img-card" alt="Imagen de @certificado.NombreCertificado" />
-                        </div>
-                        <div class="col-md-8">
-                          <div class="card-body">
-                            <h6 class="card-title">@certificado.NombreCertificado</h6>
-                            <ul class="d-flex m-1 p-0">
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes</li>
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion</li>
-                              <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                                <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología</li>
-                            </ul>
-                            <p class="card-text p-home__descrip mt-2">
-                              @certificado.Descripcion
-                            </p>
-                            <div class="d-flex">
-                               @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
-                                Conocer más detalles
-                              </button>  *@
-                              <button onclick="location.href='@Url.Action("Index", "Detalles", new { id = certificado.Id, tipo="certificados" })'" class="btn ms-auto mt-4 p-home__bg-primary">
-                                  Conocer más detalles
-                              </button>
-                            </div>
-                          </div>
-            </div>
-                </div>
-                </div>
-                    }
-            }
-            else
-            {
-                <p>No se encontraron campañas.</p>
-            }
+      <div class="col-md-2 mb-2">
+        <select class="form-control">
+          <option>Ordenar por</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-2">
+        <select class="form-control">
+          <option>Fecha</option>
+          <option>Urgente</option>
+          <option>Desde ayer</option>
+          <option>Ultimos 3 dias</option>
+          <option>Ultima Semana</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-2">
+        <select class="form-control">
+          <option>Todas las categorías</option>
+          <option>Niños y jóvenes</option>
+          <option>Educación</option>
+          <option>Salud</option>
+          <option>Otros</option>
+        </select>
+      </div>
+      <div class="col-md-2 mb-2">
+        <select class="form-control">
+          <option>Carrera</option>
+          <option>Todo</option>
+          <option>Psicología</option>
+          <option>Contabilidad</option>
+          <option>Diseño gráfico</option>
+          <option>Ingeniera Computacion y Sistemas</option>
+        </select>
       </div>
     </div>
-    
+
+    <div class="row">
+      @if (ViewData["Certificados"] != null)
+      {
+        var certificados = (Certificados[])ViewData["Certificados"];
+
+        @foreach (var certificado in certificados)
+        {
+          <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion"
+            data-date="ultimaSemana" data-career="ingenieraComputacion">
+            <div class="row no-gutters nav-bar-bgprimary">
+              <div class="col-md-4">
+                <img src="@certificado.Imagen" class="p-home__img-card" alt="Imagen de @certificado.NombreCertificado" />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h6 class="card-title">@certificado.NombreCertificado</h6>
+                  <ul class="d-flex m-1 p-0">
+                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
+                      <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes
+                    </li>
+                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
+                      <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion
+                    </li>
+                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
+                      <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología
+                    </li>
+                  </ul>
+                  <p class="card-text p-home__descrip mt-2">
+                    @certificado.Descripcion
+                  </p>
+                  <div class="d-flex">
+                    @* <button ngbDropdownItem (click)="showDetails()" class="btn ms-auto mt-4 p-home__bg-primary">
+                Conocer más detalles
+                </button> *@
+                    <button
+                      onclick="location.href='@Url.Action("Index", "Detalles", new { id = certificado.Id, tipo="certificados" })'"
+                      class="btn ms-auto mt-4 p-home__bg-primary">
+                      Conocer más detalles
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      }
+      else
+      {
+        <p>No se encontraron campañas.</p>
+      }
+    </div>
   </div>
+
+</div>
