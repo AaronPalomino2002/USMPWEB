@@ -13,11 +13,11 @@
                         <i class="lni lni-search-alt p-home__color-primary"></i>
                     </span>
                     <input name="searchTerm" style="border-left: none" type="text" class="form-control"
-                        placeholder="Buscar en campañas" value="@ViewData["CurrentSearch"]"/>
+                        placeholder="Buscar en campañas" value="@ViewData["CurrentSearch"]" onchange="this.form.submit()"/>
                 </div>
             </div>
             <div class="col-md-2 mb-2">
-                <select name="sortOrder" class="form-control">
+                <select name="sortOrder" class="form-control" onchange="this.form.submit()">
                     <option value="">Ordenar por</option>
                     <option value="fecha_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_desc")">Más recientes</option>
                     <option value="fecha_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_asc")">Más antiguos</option>
@@ -26,7 +26,7 @@
                 </select>
             </div>
             <div class="col-md-2 mb-2">
-                <select name="dateFilter" class="form-control">
+                <select name="dateFilter" class="form-control" onchange="this.form.submit()">
                     <option value="">Fecha</option>
                     <option value="urgente" selected="@(ViewData["CurrentDate"]?.ToString() == "urgente")">Urgente</option>
                     <option value="desdeAyer" selected="@(ViewData["CurrentDate"]?.ToString() == "desdeAyer")">Desde ayer</option>
@@ -35,7 +35,7 @@
                 </select>
             </div>
             <div class="col-md-2 mb-2">
-                <select name="categoryFilter" class="form-control">
+                <select name="categoryFilter" class="form-control" onchange="this.form.submit()">
                     <option value="">Todas las categorías</option>
                     @if (ViewData["Categorias"] != null)
                     {
@@ -50,7 +50,7 @@
                 </select>
             </div>
             <div class="col-md-2 mb-2">
-                <select name="careerFilter" class="form-control">
+                <select name="careerFilter" class="form-control" onchange="this.form.submit()">
                     <option value="">Carrera</option>
                     <option value="todo">Todo</option>
                     @if (ViewData["Carreras"] != null)
@@ -65,11 +65,7 @@
                     }
                 </select>
             </div>
-            <div class="col-md-1 mb-2">
-                <button type="submit" class="btn p-home__bg-primary">
-                    <i class="lni lni-search"></i>
-                </button>
-            </div>
+           
         </form>
 
         <!-- Campañas -->
