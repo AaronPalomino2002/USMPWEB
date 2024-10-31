@@ -21,7 +21,7 @@ namespace USMPWEB.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetCampanas()
         {
-            var campanas = await _context.Set<Campanas>().Include(c => c.Categoria).Include(c => c.SubCategoria).ToListAsync();
+            var campanas = await _context.Set<Campanas>().Include(c => c.Categoria).Include(c => c.SubCategorias).ToListAsync();
             return Ok(campanas);
         }
 
@@ -31,7 +31,7 @@ namespace USMPWEB.Controllers.Api
         {
             var campana = await _context.Set<Campanas>()
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (campana == null)

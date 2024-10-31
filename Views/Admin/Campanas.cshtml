@@ -122,7 +122,7 @@
                     </a>
                     <h1 class="h3 mb-0">Campañas Registradas</h1>
                 </div>
-                 <a href="@Url.Action("CrearCampana", "Admin")" class="btn-crear">
+                <a href="@Url.Action("CrearCampana", "Admin")" class="btn-crear">
                     <i class="lni lni-plus"></i>
                     Nuevas Campañas
                 </a>
@@ -156,7 +156,7 @@
                             <th>Descripción</th>
                             <th>Imagen</th>
                             <th>Categoría</th>
-                            <th>Subcategoría</th>
+                            <th>Subcategorías</th> <!-- Nueva columna -->
                             <th>Fecha Inicio</th>
                             <th>Fecha Fin</th>
                             <th>Estado</th>
@@ -198,7 +198,19 @@
                                     }
                                 </td>
                                 <td>@(campana.Categoria?.nomCategoria ?? "No asignada")</td>
-                                <td>@(campana.SubCategoria?.nomSubCategoria ?? "No asignada")</td>
+                                <td>
+                                    @if (campana.SubCategorias != null && campana.SubCategorias.Any())
+                                    {
+                                        foreach (var subcat in campana.SubCategorias)
+                                        {
+                                            <span class="badge bg-secondary me-1">@subcat.nomSubCategoria</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin subcategorías</span>
+                                    }
+                                </td>
                                 <td>@campana.FechaInicio.ToString("dd/MM/yyyy")</td>
                                 <td>@campana.FechaFin.ToString("dd/MM/yyyy")</td>
                                 <td>

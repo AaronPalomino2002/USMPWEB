@@ -163,7 +163,7 @@ namespace USMPWEB.Controllers
 
             var campanas = await _context.DataCampanas
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .OrderByDescending(c => c.FechaInicio)
                 .ToListAsync();
 
@@ -189,74 +189,71 @@ namespace USMPWEB.Controllers
         }
 
         [HttpGet]
-            public IActionResult CrearEventoInscripciones()
+        public IActionResult CrearEventoInscripciones()
+        {
+            // Cargar categorías y subcategorías desde la base de datos
+            var categorias = _context.DataCategoria.ToList();
+            var subCategorias = _context.DataSubCategoria.ToList();
+
+            ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
+            ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
+
+            return View();
+        }
+
+
+        // Acción para mostrar el formulario de creación de campaña
+        [HttpGet]
+        public async Task<IActionResult> CrearCampana()
+        {
+            ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
+            ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
+            return View(new Campanas());
+        }
+
+
+        // Acción para procesar la creación de una nueva campaña
+        [HttpPost]
+        public async Task<IActionResult> CrearCampana(Campanas campana)
+        {
+            if (!ModelState.IsValid)
             {
-                // Cargar categorías y subcategorías desde la base de datos
-                var categorias = _context.DataCategoria.ToList();
-                var subCategorias = _context.DataSubCategoria.ToList();
-                
-                ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
-                ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
-                
-                return View();
+                ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
+                ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
+                return View(campana);
             }
-        
 
-            // Acción para mostrar el formulario de creación de campaña
-           [HttpGet]
-            public IActionResult CrearCampana()
+            if (campana.SubCategoriaIds == null || campana.SubCategoriaIds.Count < 1 || campana.SubCategoriaIds.Count > 3)
             {
-                // Cargar categorías y subcategorías desde la base de datos
-                var categorias = _context.DataCategoria.ToList();
-                var subCategorias = _context.DataSubCategoria.ToList();
-                
-                ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
-                ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
-                
-                return View();
+                ModelState.AddModelError("SubCategoriaIds", "Debe seleccionar entre 1 y 3 subcategorías");
+                ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
+                ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
+                return View(campana);
             }
 
-
-
-            // Acción para procesar la creación de una nueva campaña
-            [HttpPost]
-            public async Task<IActionResult> CrearCampana(Campanas campanas)
+            try
             {
-                if (ModelState.IsValid)
-                {
-                    // Verificar si ya existe una campaña con el mismo título
-                    var existingCampana = await _context.DataCampanas.SingleOrDefaultAsync(c => c.Titulo == campanas.Titulo);
-                    if (existingCampana != null)
-                    {
-                        // Ya existe una campaña con ese título
-                        ViewBag.ErrorMessage = "Una campaña con este título ya existe.";
-                        ViewBag.Categorias = _context.DataCategoria.ToList(); // Cargar las categorías
-                        return View(campanas);
-                    }
+                // Obtener las subcategorías seleccionadas
+                var subcategorias = await _context.DataSubCategoria
+                    .Where(s => campana.SubCategoriaIds.Contains(s.IdSubCategoria))
+                    .ToListAsync();
 
-                    try
-                    {
-                        // Guardar en la tabla de 'campañas'
-                        _context.DataCampanas.Add(campanas);
-                        await _context.SaveChangesAsync();
+                campana.SubCategorias = subcategorias;
 
-                        // Mensaje de éxito y redirección
-                        TempData["Mensaje"] = "Campaña creada correctamente.";
-                        return RedirectToAction(nameof(Campanas));
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log o manejo del error
-                        ViewBag.ErrorMessage = "Error al crear la campaña: " + ex.Message;
-                        ViewBag.Categorias = _context.DataCategoria.ToList(); // Cargar las categorías
-                        return View(campanas);
-                    }
-                }
+                await _context.DataCampanas.AddAsync(campana);
+                await _context.SaveChangesAsync();
 
-                // Si el modelo no es válido, recargar las categorías
-                ViewBag.Categorias = _context.DataCategoria.ToList();
-                return View(campanas);
+                TempData["Mensaje"] = "Campaña creada correctamente";
+                return RedirectToAction(nameof(Campanas));
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error al crear la campaña: " + ex.Message);
+                ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
+                ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
+                return View(campana);
+            }
+        }
 
 
         [HttpGet]
@@ -264,7 +261,7 @@ namespace USMPWEB.Controllers
         {
             var campana = await _context.DataCampanas
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (campana == null)
@@ -272,23 +269,31 @@ namespace USMPWEB.Controllers
                 return NotFound();
             }
 
-            // Cargar categorías y subcategorías para los dropdowns
             ViewBag.Categorias = await _context.DataCategoria.ToListAsync();
             ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
+
             return View(campana);
         }
-
         [HttpPost]
-        public async Task<IActionResult> EditarCampana(int id, Campanas campana)
+        public async Task<IActionResult> EditarCampana(int id, Campanas campana, List<long> SubCategoriaIds)
         {
             if (id != campana.Id)
             {
                 return NotFound();
             }
 
+            if (SubCategoriaIds == null || SubCategoriaIds.Count < 1 || SubCategoriaIds.Count > 3)
+            {
+                ModelState.AddModelError("SubCategoriaIds", "Debe seleccionar entre 1 y 3 subcategorías");
+                ViewBag.Categorias = await _context.DataCategoria.ToListAsync();
+                ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
+                return View(campana);
+            }
+
             try
             {
                 var campanaExistente = await _context.DataCampanas
+                    .Include(c => c.SubCategorias)
                     .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (campanaExistente == null)
@@ -296,14 +301,23 @@ namespace USMPWEB.Controllers
                     return NotFound();
                 }
 
-                // Actualizar datos de la campaña
+                // Actualizar propiedades básicas
                 campanaExistente.Titulo = campana.Titulo;
                 campanaExistente.Descripcion = campana.Descripcion;
                 campanaExistente.CategoriaId = campana.CategoriaId;
-                campanaExistente.subCategoriaId = campana.subCategoriaId;
                 campanaExistente.Imagen = campana.Imagen;
                 campanaExistente.FechaInicio = campana.FechaInicio;
                 campanaExistente.FechaFin = campana.FechaFin;
+
+                // Actualizar subcategorías
+                campanaExistente.SubCategorias.Clear();
+                var subcategoriasSeleccionadas = await _context.DataSubCategoria
+                    .Where(s => SubCategoriaIds.Contains(s.IdSubCategoria))
+                    .ToListAsync();
+                foreach (var subcat in subcategoriasSeleccionadas)
+                {
+                    campanaExistente.SubCategorias.Add(subcat);
+                }
 
                 await _context.SaveChangesAsync();
                 TempData["Mensaje"] = "Campaña actualizada correctamente";
@@ -317,7 +331,6 @@ namespace USMPWEB.Controllers
                 return View(campana);
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> EliminarCampana(int id)
         {
@@ -482,7 +495,7 @@ namespace USMPWEB.Controllers
                 .Include(c => c.SubCategoria)
                 .OrderByDescending(c => c.FechaExpedicion)
                 .ToListAsync();
-   
+
 
             return View(certificados);
         }
