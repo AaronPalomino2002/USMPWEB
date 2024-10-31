@@ -136,18 +136,23 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Subcategoría</label>
-                        <select name="subCategoriaId" class="form-select">
-                            <option value="">Seleccione una subcategoría</option>
+                        <label class="form-label">Subcategorías (Seleccione de 1 a 3)</label>
+                        <div class="subcategorias-container border rounded p-3">
                             @foreach (var subCategoria in ViewBag.SubCategorias)
                             {
-                                bool isSelected = Model.subCategoriaId.HasValue &&
-                                Model.subCategoriaId.Value == subCategoria.IdSubCategoria;
-                                <option value="@subCategoria.IdSubCategoria" selected="@isSelected">
-                                    @subCategoria.nomSubCategoria
-                                </option>
+                                bool isSelected = Model.SubCategorias?.Any(s => s.IdSubCategoria ==
+                                subCategoria.IdSubCategoria) ?? false;
+                                <div class="form-check">
+                                    <input type="checkbox" name="SubCategoriaIds" value="@subCategoria.IdSubCategoria"
+                                        class="form-check-input" @(isSelected ? "checked" : "")
+                                        id="subcat_@subCategoria.IdSubCategoria" />
+                                    <label class="form-check-label" for="subcat_@subCategoria.IdSubCategoria">
+                                        @subCategoria.nomSubCategoria
+                                    </label>
+                                </div>
                             }
-                        </select>
+                        </div>
+                        <span asp-validation-for="SubCategoriaIds" class="text-danger"></span>
                     </div>
                 </div>
 

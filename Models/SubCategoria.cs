@@ -15,5 +15,6 @@ namespace USMPWEB.Models
         public long IdSubCategoria { get; set;}
         public string? nomSubCategoria{get; set;}
         public string? imgSubCategoria {get; set;}
+        public virtual ICollection<Campanas> Campanas { get; set; } = new List<Campanas>();
     }
 }

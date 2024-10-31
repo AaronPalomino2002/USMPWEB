@@ -13,25 +13,34 @@
                         <i class="lni lni-search-alt p-home__color-primary"></i>
                     </span>
                     <input name="searchTerm" style="border-left: none" type="text" class="form-control"
-                        placeholder="Buscar en campañas" value="@ViewData["CurrentSearch"]" onchange="this.form.submit()"/>
+                        placeholder="Buscar en campañas" value="@ViewData["CurrentSearch"]"
+                        onchange="this.form.submit()" />
                 </div>
             </div>
             <div class="col-md-2 mb-2">
                 <select name="sortOrder" class="form-control" onchange="this.form.submit()">
                     <option value="">Ordenar por</option>
-                    <option value="fecha_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_desc")">Más recientes</option>
-                    <option value="fecha_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_asc")">Más antiguos</option>
-                    <option value="titulo_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_desc")">Título Z-A</option>
-                    <option value="titulo_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_asc")">Título A-Z</option>
+                    <option value="fecha_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_desc")">Más
+                        recientes</option>
+                    <option value="fecha_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "fecha_asc")">Más
+                        antiguos</option>
+                    <option value="titulo_desc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_desc")">
+                        Título Z-A</option>
+                    <option value="titulo_asc" selected="@(ViewData["CurrentSort"]?.ToString() == "titulo_asc")">Título
+                        A-Z</option>
                 </select>
             </div>
             <div class="col-md-2 mb-2">
                 <select name="dateFilter" class="form-control" onchange="this.form.submit()">
                     <option value="">Fecha</option>
-                    <option value="urgente" selected="@(ViewData["CurrentDate"]?.ToString() == "urgente")">Urgente</option>
-                    <option value="desdeAyer" selected="@(ViewData["CurrentDate"]?.ToString() == "desdeAyer")">Desde ayer</option>
-                    <option value="ultimos3Dias" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimos3Dias")">Últimos 3 días</option>
-                    <option value="ultimaSemana" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimaSemana")">Última Semana</option>
+                    <option value="urgente" selected="@(ViewData["CurrentDate"]?.ToString() == "urgente")">Urgente
+                    </option>
+                    <option value="desdeAyer" selected="@(ViewData["CurrentDate"]?.ToString() == "desdeAyer")">Desde
+                        ayer</option>
+                    <option value="ultimos3Dias" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimos3Dias")">
+                        Últimos 3 días</option>
+                    <option value="ultimaSemana" selected="@(ViewData["CurrentDate"]?.ToString() == "ultimaSemana")">
+                        Última Semana</option>
                 </select>
             </div>
             <div class="col-md-2 mb-2">
@@ -41,8 +50,8 @@
                     {
                         foreach (var categoria in (IEnumerable<Categoria>)ViewData["Categorias"])
                         {
-                            <option value="@categoria.IdCategoria" 
-                                    selected="@(ViewData["CurrentCategory"]?.ToString() == categoria.IdCategoria.ToString())">
+                            <option value="@categoria.IdCategoria"
+                                selected="@(ViewData["CurrentCategory"]?.ToString() == categoria.IdCategoria.ToString())">
                                 @categoria.nomCategoria
                             </option>
                         }
@@ -57,15 +66,15 @@
                     {
                         foreach (var carrera in (IEnumerable<Carrera>)ViewData["Carreras"])
                         {
-                            <option value="@carrera.IdCarrera" 
-                                    selected="@(ViewData["CurrentCareer"]?.ToString() == carrera.IdCarrera.ToString())">
+                            <option value="@carrera.IdCarrera"
+                                selected="@(ViewData["CurrentCareer"]?.ToString() == carrera.IdCarrera.ToString())">
                                 @carrera.nomCarrera
                             </option>
                         }
                     }
                 </select>
             </div>
-           
+
         </form>
 
         <!-- Campañas -->
@@ -85,24 +94,33 @@
                                 <div class="card-body">
                                     <h6 class="card-title">@campana.Titulo</h6>
                                     <ul class="d-flex m-1 p-0">
-                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
-                                            style="border: 1px solid; border-radius: 25px;">
-                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes
-                                        </li>
-                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
-                                            style="border: 1px solid; border-radius: 25px;">
-                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion
-                                        </li>
-                                        <li class="p-2 m-1 p-home__bg-gray-class text-center" 
-                                            style="border: 1px solid; border-radius: 25px;">
-                                            <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología
-                                        </li>
+                                        @if (campana.SubCategorias != null && campana.SubCategorias.Any())
+                                        {
+                                            foreach (var subcategoria in campana.SubCategorias)
+                                            {
+                                                <li class="p-2 m-1 p-home__bg-gray-class text-center"
+                                                    style="border: 1px solid; border-radius: 25px;">
+                                                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
+                                    diccionario *@
+                                                    <img style="width: 20px; margin-right: 5px;"
+                                                        src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
+                                                        onerror="this.src='/ico/default.png'">
+                                                    @subcategoria.nomSubCategoria
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="p-2 m-1 p-home__bg-gray-class text-center">
+                                                Sin subcategorías
+                                            </li>
+                                        }
                                     </ul>
                                     <p class="card-text p-home__descrip mt-2">
                                         @campana.Descripcion
                                     </p>
                                     <div class="d-flex">
-                                        <button 
+                                        <button
                                             onclick="location.href='@Url.Action("Index", "Detalles", new { id = campana.Id, tipo="campana" })'"
                                             class="btn ms-auto mt-4 p-home__bg-primary">
                                             Conocer más detalles

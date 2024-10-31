@@ -19,20 +19,20 @@ namespace USMPWEB.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchTerm, string sortOrder, string dateFilter, 
-                                             string categoryFilter, string careerFilter)
+        public async Task<IActionResult> Index(string searchTerm, string sortOrder, string dateFilter,
+                                         string categoryFilter, string careerFilter)
         {
             ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
 
             try
             {
                 var campanas = from c in _context.DataCampanas
-                              select c;
+                               select c;
 
                 // Filtro de búsqueda
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    campanas = campanas.Where(c => c.Titulo.Contains(searchTerm) || 
+                    campanas = campanas.Where(c => c.Titulo.Contains(searchTerm) ||
                                                  c.Descripcion.Contains(searchTerm));
                     ViewData["CurrentSearch"] = searchTerm;
                 }
@@ -63,12 +63,13 @@ namespace USMPWEB.Controllers
                     ViewData["CurrentCategory"] = categoryFilter;
                 }
 
-                // Filtro de carrera
-                if (!string.IsNullOrEmpty(careerFilter) && careerFilter != "todos")
-                {
-                    campanas = campanas.Where(c => c.subCategoriaId.ToString() == careerFilter);
-                    ViewData["CurrentCareer"] = careerFilter;
-                }
+                // Filtro de carrera (actualizado para usar SubCategorias)
+               // if (!string.IsNullOrEmpty(careerFilter) && careerFilter != "todos")
+               // {
+               //     long careerFilterId = long.Parse(careerFilter);
+               //     campanas = campanas.Where(c => c.SubCategorias.Any(sc => sc.IdSubCategoria == careerFilterId));
+               //     ViewData["CurrentCareer"] = careerFilter;
+               // }
 
                 // Ordenamiento
                 switch (sortOrder)
@@ -94,7 +95,7 @@ namespace USMPWEB.Controllers
                 // Cargar datos relacionados y ejecutar la consulta
                 var resultados = await campanas
                     .Include(c => c.Categoria)
-                    .Include(c => c.SubCategoria)
+                    .Include(c => c.SubCategorias)  // Cambiado de SubCategoria a SubCategorias
                     .ToListAsync();
 
                 ViewData["Campanas"] = resultados.ToArray();
