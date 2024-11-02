@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using USMPWEB.Data;
 using USMPWEB.Models;
 
 namespace USMPWEB.Controllers
@@ -11,68 +14,90 @@ namespace USMPWEB.Controllers
     {
         private readonly ILogger<DetallesController> _logger;
         private readonly HttpClient _httpClient;
-        private readonly string _apiBaseUrl;
+        private readonly ApplicationDbContext _context; // Agregar esto
 
-        public DetallesController(ILogger<DetallesController> logger, IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public DetallesController(
+            ILogger<DetallesController> logger,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ApplicationDbContext context) // Agregar esto
         {
             _logger = logger;
             _httpClient = httpClientFactory.CreateClient();
-            _apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? throw new InvalidOperationException("API base URL not found in configuration.");
+            _context = context; // Agregar esto
+            var baseUrl = configuration["ApiSettings:BaseUrl"] ??
+                throw new InvalidOperationException("API base URL not found in configuration.");
+            _httpClient.BaseAddress = new Uri(baseUrl);
         }
 
         public async Task<IActionResult> Index(int id, string tipo)
         {
-            if (string.IsNullOrEmpty(tipo))
+            try
             {
-                return BadRequest("El tipo no puede estar vacío.");
-            }
-
-            if (tipo.Equals("campana", StringComparison.OrdinalIgnoreCase))
-            {
-                // Llamada a la API para obtener los detalles de la campaña
-                var campana = await _httpClient.GetFromJsonAsync<Campanas>($"{_apiBaseUrl}/Campanas/{id}");
-
-                if (campana == null)
+                if (string.IsNullOrEmpty(tipo))
                 {
-                    return NotFound();
+                    return BadRequest("El tipo no puede estar vacío.");
                 }
 
-                return View("~/Views/Home/Detalles/Index.cshtml", campana); // Ruta completa a la vista de Campanas
-            }
-            else if (tipo.Equals("inscripcion", StringComparison.OrdinalIgnoreCase))
-            {
-                // Llamada a la API para obtener los detalles de la inscripción
-                var e_inscripcion = await _httpClient.GetFromJsonAsync<EventosInscripciones>($"{_apiBaseUrl}/EventosInscripciones/{id}");
-
-                if (e_inscripcion == null)
+                if (tipo.Equals("campana", StringComparison.OrdinalIgnoreCase))
                 {
-                    return NotFound();
+                    // Intentar obtener la campaña directamente de la base de datos
+                    var campana = await _context.DataCampanas
+                        .Include(c => c.Categoria)
+                        .Include(c => c.SubCategorias)
+                        .FirstOrDefaultAsync(c => c.Id == id);
+
+                    if (campana == null)
+                    {
+                        _logger.LogWarning($"Campaña con ID {id} no encontrada");
+                        return NotFound($"No se encontró la campaña con ID {id}");
+                    }
+
+                    return View("~/Views/Home/Detalles/Index.cshtml", campana);
                 }
-
-                return View("~/Views/Inscripciones/Detalles/Index.cshtml", e_inscripcion); // Ruta completa a la vista de Inscripciones
-            }
-            else if (tipo.Equals("certificados", StringComparison.OrdinalIgnoreCase))
-            {
-                // Llamada a la API para obtener los detalles de la inscripción
-                var certificados = await _httpClient.GetFromJsonAsync<Certificados>($"{_apiBaseUrl}/Certificados/{id}");
-
-                if (certificados == null)
+                else if (tipo.Equals("inscripcion", StringComparison.OrdinalIgnoreCase))
                 {
-                    return NotFound();
+                    var e_inscripcion = await _context.DataEventosInscripciones
+                        .Include(e => e.Categoria)
+                        .FirstOrDefaultAsync(e => e.Id == id);
+
+                    if (e_inscripcion == null)
+                    {
+                        _logger.LogWarning($"Inscripción con ID {id} no encontrada");
+                        return NotFound($"No se encontró la inscripción con ID {id}");
+                    }
+
+                    return View("~/Views/Inscripciones/Detalles/Index.cshtml", e_inscripcion);
                 }
+                else if (tipo.Equals("certificados", StringComparison.OrdinalIgnoreCase))
+                {
+                    var certificados = await _context.DataCertificados
+                        .FirstOrDefaultAsync(c => c.Id == id);
 
-                return View("~/Views/Certificados/Detalles/Index.cshtml", certificados); // Ruta completa a la vista de Inscripciones
+                    if (certificados == null)
+                    {
+                        _logger.LogWarning($"Certificado con ID {id} no encontrado");
+                        return NotFound($"No se encontró el certificado con ID {id}");
+                    }
+
+                    return View("~/Views/Certificados/Detalles/Index.cshtml", certificados);
+                }
+                else
+                {
+                    return BadRequest("Tipo no válido. Debe ser 'campana', 'inscripcion' o 'certificados'.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Tipo no válido. Debe ser 'campana', 'inscripcion', 'certficados' .");
+                _logger.LogError(ex, $"Error al obtener detalles para tipo {tipo} con ID {id}");
+                // Devolver una vista de error personalizada con más información
+                return View("Error", new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                    Message = "Ha ocurrido un error al cargar los detalles. Por favor, intente nuevamente.",
+                    DetailedMessage = ex.Message
+                });
             }
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View("Error!");
         }
     }
 }
