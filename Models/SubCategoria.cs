@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace USMPWEB.Models
@@ -15,6 +16,7 @@ namespace USMPWEB.Models
         public long IdSubCategoria { get; set;}
         public string? nomSubCategoria{get; set;}
         public string? imgSubCategoria {get; set;}
+        [JsonIgnore]
         public virtual ICollection<Campanas> Campanas { get; set; } = new List<Campanas>();
     }
 }

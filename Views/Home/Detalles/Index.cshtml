@@ -18,7 +18,69 @@
             </div>
           </div>
           <div class="col-md-3">
-            <button class="btn btn-primary ms-auto mt-4 p-home__bg-primary">Únete</button>
+          <button type="button" class="btn btn-primary ms-auto mt-4 p-home__bg-primary" data-bs-toggle="modal" data-bs-target="#uneteModal">
+    Únete
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="uneteModal" tabindex="-1" aria-labelledby="uneteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uneteModalLabel">Únete a nuestra Campaña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del modal -->
+                <p>Ingresa tus datos para unirte.</p>
+                <form>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Tus Apellidos">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Matricula</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Numero Matricula">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Facultad</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Facultad">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Carrera</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Carrera">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Direccion</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Direccion">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Telefono</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Telefono">
+                    </div>
+                    <div class="mb-1">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="mb-1">
+                        <label for="nombre" class="form-label">Monto : 90 Nuevos Soles</label>
+                    </div>
+                     <div class="form-check mb-">
+                        <input type="checkbox" class="form-check-input" id="terminos" required>
+                        <label class="form-check-label" for="terminos">
+                            Acepto los <a href="#" class="text-decoration-underline">términos y condiciones</a> y la <a href="#" class="text-decoration-underline">política de privacidad</a>.
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
             <p style="font-size: 11px">Cierre de Postulaciones </br> el @Model.FechaFin</p>
           </div>
         </div>
