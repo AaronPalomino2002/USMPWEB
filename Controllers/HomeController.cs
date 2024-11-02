@@ -32,8 +32,11 @@ namespace USMPWEB.Controllers
                 // Filtro de búsqueda
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    campanas = campanas.Where(c => c.Titulo.Contains(searchTerm) ||
-                                                 c.Descripcion.Contains(searchTerm));
+                    var searchTermLower = searchTerm.ToLower(); // Convertir el término de búsqueda a minúsculas
+                    campanas = campanas.Where(c =>
+                        c.Titulo.ToLower().Contains(searchTermLower) ||
+                        c.Descripcion.ToLower().Contains(searchTermLower)
+                    );
                     ViewData["CurrentSearch"] = searchTerm;
                 }
 
@@ -64,12 +67,12 @@ namespace USMPWEB.Controllers
                 }
 
                 // Filtro de carrera (actualizado para usar SubCategorias)
-               // if (!string.IsNullOrEmpty(careerFilter) && careerFilter != "todos")
-               // {
-               //     long careerFilterId = long.Parse(careerFilter);
-               //     campanas = campanas.Where(c => c.SubCategorias.Any(sc => sc.IdSubCategoria == careerFilterId));
-               //     ViewData["CurrentCareer"] = careerFilter;
-               // }
+                // if (!string.IsNullOrEmpty(careerFilter) && careerFilter != "todos")
+                // {
+                //     long careerFilterId = long.Parse(careerFilter);
+                //     campanas = campanas.Where(c => c.SubCategorias.Any(sc => sc.IdSubCategoria == careerFilterId));
+                //     ViewData["CurrentCareer"] = careerFilter;
+                // }
 
                 // Ordenamiento
                 switch (sortOrder)
