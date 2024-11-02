@@ -165,7 +165,7 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 0px;
 }
 .img-logo-header {
   margin-left: 10px;
@@ -301,10 +301,22 @@ body {
 }
 /* Ajusta el contenedor principal */
 .containerdiv {
+  max-height: 500px;
   flex: 1;
   margin-bottom: 130px; /* Espacio entre el contenido y el footer */
   width: 100%;
   overflow-y: auto;
+}
+.containerdiv::-webkit-scrollbar {
+  width: 5px;
+}
+.containerdiv::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.containerdiv::-webkit-scrollbar-thumb {
+  background: rgba(213, 0, 0, 0.7); /* Color del pulgar (parte que se mueve) */
+  border-radius: 10px; /* Esquinas redondeadas para el pulgar */
 }
 
 /* Asegúrate de que el contenido no cause scroll horizontal */
@@ -556,4 +568,16 @@ body {
   position: relative;
   z-index: 1060;
   background-color: rgba(213, 0, 0, 0.7);
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(213, 0, 0, 0.7); /* Color del pulgar (parte que se mueve) */
+  border-radius: 10px; /* Esquinas redondeadas para el pulgar */
 }
