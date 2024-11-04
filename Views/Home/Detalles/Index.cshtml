@@ -9,12 +9,32 @@
 
       <div class="col-lg-8">
         <div class="row mt-4">
-            <h6>@Model.Titulo</h6>
+          <div class="col-md-9 align-content-center">
+            <h4 class="font-weight-bold text-center">@Model.Titulo</h4>
+        </div>
           <div class="col-md-9 align-content-center">
             <div class="content-imgs">
-              <img style="width: 40px; height: 40px" src="~/ico/educacion.png" alt="role niños" />
-              <img style="width: 40px; height: 40px" src="~/ico/voley.png"  alt="role niños" />
-              <img style="width: 40px; height: 40px" src="~/ico/salud.png"  alt="role niños" />
+               @if (Model.SubCategorias != null && Model.SubCategorias.Any())
+                                        {
+                                            foreach (var subcategoria in Model.SubCategorias)
+                                            {
+                                                <li class="p-2 m-1 p-home__bg-gray-class text-center li-sub"
+                                                    style="">
+                                                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
+                                    diccionario *@
+                                                    <img style="width: 20px; margin-right: 5px;"
+                                                        src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
+                                                        onerror="this.src='/ico/default.png'">
+                                                    @subcategoria.nomSubCategoria
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="p-2 m-1 p-home__bg-gray-class text-center">
+                                                Sin subcategorías
+                                            </li>
+                                        }
             </div>
           </div>
           <div class="col-md-3">
@@ -67,6 +87,7 @@
                         <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com">
                     </div>
                     <div class="mb-1">
+                       <label for="email" class="form-label">Correo Electrónico</label>
                         <label for="nombre" class="form-label">Monto : 90 Nuevos Soles</label>
                     </div>
                      <div class="form-check mb-">
