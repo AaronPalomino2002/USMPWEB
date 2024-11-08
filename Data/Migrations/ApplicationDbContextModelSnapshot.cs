@@ -18,7 +18,7 @@ namespace USMPWEB.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -282,6 +282,76 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("t_alumnos");
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.CampanaInscripcion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AceptoTerminos")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Apellidos")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("CampanaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Carrera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Estado")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Facultad")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaInscripcion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Matricula")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("NumeroRecibo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampanaId");
+
+                    b.ToTable("t_campana_inscripciones");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.Campanas", b =>
                 {
                     b.Property<int>("Id")
@@ -527,6 +597,60 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("t_login");
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.Pago", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodigoPago")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaExpiracion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaPago")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("InscripcionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MetodoPago")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("MonedaCodigo")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NumeroRecibo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InscripcionId");
+
+                    b.ToTable("t_pagos");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.RegisterViewModel", b =>
                 {
                     b.Property<string>("numMatricula")
@@ -713,6 +837,17 @@ namespace USMPWEB.Data.Migrations
                     b.Navigation("Login");
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.CampanaInscripcion", b =>
+                {
+                    b.HasOne("USMPWEB.Models.Campanas", "Campana")
+                        .WithMany()
+                        .HasForeignKey("CampanaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campana");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.Campanas", b =>
                 {
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
@@ -761,6 +896,17 @@ namespace USMPWEB.Data.Migrations
                     b.Navigation("SubCategoria");
                 });
 
+            modelBuilder.Entity("USMPWEB.Models.Pago", b =>
+                {
+                    b.HasOne("USMPWEB.Models.CampanaInscripcion", "Inscripcion")
+                        .WithMany("Pagos")
+                        .HasForeignKey("InscripcionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inscripcion");
+                });
+
             modelBuilder.Entity("USMPWEB.Models.Talleres", b =>
                 {
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
@@ -774,6 +920,11 @@ namespace USMPWEB.Data.Migrations
                     b.Navigation("Categoria");
 
                     b.Navigation("SubCategoria");
+                });
+
+            modelBuilder.Entity("USMPWEB.Models.CampanaInscripcion", b =>
+                {
+                    b.Navigation("Pagos");
                 });
 #pragma warning restore 612, 618
         }

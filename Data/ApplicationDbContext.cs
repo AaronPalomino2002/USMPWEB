@@ -24,6 +24,8 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<USMPWEB.Models.Categoria> DataCategoria { get; set; }
     public DbSet<USMPWEB.Models.SubCategoria> DataSubCategoria { get; set; }
     public DbSet<USMPWEB.Models.EventosInscripciones> DataEventosInscripciones { get; set; }
+    public DbSet<CampanaInscripcion> CampanaInscripciones { get; set; } = null!;
+    public DbSet<Pago> Pagos { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -40,5 +42,12 @@ public class ApplicationDbContext : IdentityDbContext
                     j.HasKey("CampanasId", "SubCategoriasIdSubCategoria");
                     j.ToTable("CampanaSubCategoria");
                 });
+        modelBuilder.Entity<CampanaInscripcion>()
+            .Property(c => c.NumeroRecibo)
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<Pago>()
+            .Property(p => p.NumeroRecibo)
+            .HasMaxLength(50);        
     }
 }

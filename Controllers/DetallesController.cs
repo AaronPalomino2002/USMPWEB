@@ -2,15 +2,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Text.Json;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
 using USMPWEB.Data;
 using USMPWEB.Models;
 
 namespace USMPWEB.Controllers
 {
     public class DetallesController : Controller
+
     {
         private readonly ILogger<DetallesController> _logger;
         private readonly HttpClient _httpClient;
@@ -99,5 +104,118 @@ namespace USMPWEB.Controllers
                 });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Inscribirse(
+    string Nombres,
+    string Apellidos,
+    string Matricula,
+    string Facultad,
+    string Carrera,
+    string Direccion,
+    string Telefono,
+    string Email,
+    int CampanaId,
+    bool AceptoTerminos)
+        {
+            try
+            {
+                // Obtener la campaña con todos sus datos relacionados
+                var campana = await _context.DataCampanas
+                    .Include(c => c.Categoria)
+                    .Include(c => c.SubCategorias)
+                    .FirstOrDefaultAsync(c => c.Id == CampanaId);
+
+                if (campana == null)
+                {
+                    TempData["Error"] = "La campaña no existe";
+                    return RedirectToAction("Index", new { id = CampanaId, tipo = "campana" });
+                }
+
+                // Crear la inscripción
+                var inscripcion = new CampanaInscripcion
+                {
+                    CampanaId = CampanaId,
+                    NumeroRecibo = $"REC-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}", // Generar número de recibo
+                    Nombres = Nombres,
+                    Apellidos = Apellidos,
+                    Matricula = Matricula,
+                    Facultad = Facultad,
+                    Carrera = Carrera,
+                    Direccion = Direccion,
+                    Telefono = Telefono,
+                    Email = Email,
+                    Monto = 90.00M,
+                    FechaInscripcion = DateTime.UtcNow,
+                    Estado = "Pendiente",
+                    AceptoTerminos = AceptoTerminos
+                };
+
+                _context.CampanaInscripciones.Add(inscripcion);
+                await _context.SaveChangesAsync();
+
+                // Crear el recibo
+                var recibo = new ReciboViewModel
+                {
+                    InscripcionId = inscripcion.Id,
+                    NumeroRecibo = $"REC-{DateTime.Now:yyyyMMdd}-{inscripcion.Id:D4}",
+                    Nombres = inscripcion.Nombres,
+                    Apellidos = inscripcion.Apellidos,
+                    Matricula = inscripcion.Matricula,
+                    Facultad = inscripcion.Facultad,
+                    Carrera = inscripcion.Carrera,
+                    Email = inscripcion.Email,
+                    Direccion = inscripcion.Direccion,
+                    Telefono = inscripcion.Telefono,
+                    Monto = inscripcion.Monto,
+                    FechaInscripcion = inscripcion.FechaInscripcion.ToLocalTime(),
+                    Campana = campana,
+                    Estado = inscripcion.Estado
+                };
+
+                // Generar código QR
+                recibo.GenerarQR(); // Cambiado de GenerarCodigos() a GenerarQR()
+
+                TempData["Recibo"] = JsonSerializer.Serialize(recibo, new JsonSerializerOptions
+                {
+                    ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+                });
+
+                return RedirectToAction(nameof(MostrarRecibo), new { id = inscripcion.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al procesar la inscripción");
+                TempData["Error"] = "Ocurrió un error al procesar tu inscripción";
+                return RedirectToAction("Index", new { id = CampanaId, tipo = "campana" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult MostrarRecibo(int id)
+        {
+            try
+            {
+                if (TempData["Recibo"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var recibo = JsonSerializer.Deserialize<ReciboViewModel>((string)TempData["Recibo"]);
+                return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", recibo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al mostrar el recibo");
+                TempData["Error"] = "Ocurrió un error al mostrar el recibo";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CerrarRecibo(string returnUrl = null)
+        {
+            return Redirect(returnUrl ?? "/");
+        }
     }
+
 }

@@ -1,0 +1,20 @@
+@model USMPWEB.Models.Pago
+@{
+    ViewData["Title"] = "Confirmación de Pago";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body text-center">
+            <h2 class="text-success">¡Pago Exitoso!</h2>
+            <p>Tu pago ha sido procesado correctamente</p>
+            <p>Número de Recibo: @Model.NumeroRecibo</p>
+            <p>Monto: S/. @Model.Monto.ToString("N2")</p>
+            <p>Fecha: @Model.FechaPago?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+            
+            <div class="mt-4">
+                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>

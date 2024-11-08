@@ -11,97 +11,112 @@
         <div class="row mt-4">
           <div class="col-md-9 align-content-center">
             <h4 class="font-weight-bold text-center">@Model.Titulo</h4>
-        </div>
+          </div>
           <div class="col-md-9 align-content-center">
             <div class="content-imgs">
-               @if (Model.SubCategorias != null && Model.SubCategorias.Any())
-                                        {
-                                            foreach (var subcategoria in Model.SubCategorias)
-                                            {
-                                                <li class="p-2 m-1 p-home__bg-gray-class text-center li-sub"
-                                                    style="">
-                                                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
-                                    diccionario *@
-                                                    <img style="width: 20px; margin-right: 5px;"
-                                                        src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
-                                                        onerror="this.src='/ico/default.png'">
-                                                    @subcategoria.nomSubCategoria
-                                                </li>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <li class="p-2 m-1 p-home__bg-gray-class text-center">
-                                                Sin subcategorías
-                                            </li>
-                                        }
+              @if (Model.SubCategorias != null && Model.SubCategorias.Any())
+              {
+                foreach (var subcategoria in Model.SubCategorias)
+                {
+                  <li class="p-2 m-1 p-home__bg-gray-class text-center li-sub" style="">
+                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
+                diccionario *@
+                    <img style="width: 20px; margin-right: 5px;" src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
+                      onerror="this.src='/ico/default.png'">
+                    @subcategoria.nomSubCategoria
+                  </li>
+                }
+              }
+              else
+              {
+                <li class="p-2 m-1 p-home__bg-gray-class text-center">
+                  Sin subcategorías
+                </li>
+              }
             </div>
           </div>
           <div class="col-md-3">
-          <button type="button" class="btn btn-primary ms-auto mt-4 p-home__bg-primary" data-bs-toggle="modal" data-bs-target="#uneteModal">
-    Únete
-</button>
+            <button type="button" class="btn btn-primary ms-auto mt-4 p-home__bg-primary" data-bs-toggle="modal"
+              data-bs-target="#uneteModal">
+              Únete
+            </button>
 
-<!-- Modal -->
-<div class="modal fade" id="uneteModal" tabindex="-1" aria-labelledby="uneteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uneteModalLabel">Únete a nuestra Campaña</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Contenido del modal -->
-                <p>Ingresa tus datos para unirte.</p>
-                <form>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Nombres</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Apellidos</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Tus Apellidos">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Matricula</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Numero Matricula">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Facultad</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Facultad">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Carrera</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Carrera">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Direccion</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Direccion">
-                    </div>
-                    <div class="mb-1">
-                        <label for="nombre" class="form-label">Telefono</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Telefono">
-                    </div>
-                    <div class="mb-1">
-                        <label for="email" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="correo@ejemplo.com">
-                    </div>
-                    <div class="mb-1">
-                       <label for="email" class="form-label">Correo Electrónico</label>
-                        <label for="nombre" class="form-label">Monto : 90 Nuevos Soles</label>
-                    </div>
-                     <div class="form-check mb-">
-                        <input type="checkbox" class="form-check-input" id="terminos" required>
-                        <label class="form-check-label" for="terminos">
-                            Acepto los <a href="#" class="text-decoration-underline">términos y condiciones</a> y la <a href="#" class="text-decoration-underline">política de privacidad</a>.
+            <!-- Modal -->
+            <div class="modal fade" id="uneteModal" tabindex="-1" aria-labelledby="uneteModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="uneteModalLabel">Únete a nuestra Campaña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Contenido del modal -->
+                    <p>Ingresa tus datos para unirte.</p>
+                    <form method="post" asp-controller="Detalles" asp-action="Inscribirse">
+                      <input type="hidden" name="CampanaId" value="@Model.Id" />
+
+                      <div class="mb-1">
+                        <label for="Nombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="Nombres" name="Nombres" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="Apellidos" name="Apellidos" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Matricula" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" id="Matricula" name="Matricula" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Facultad" class="form-label">Facultad</label>
+                        <input type="text" class="form-control" id="Facultad" name="Facultad" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Carrera" class="form-label">Carrera</label>
+                        <input type="text" class="form-control" id="Carrera" name="Carrera" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="Direccion" name="Direccion" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="Telefono" name="Telefono" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="Email" name="Email" required>
+                      </div>
+                      <div class="mb-1">
+                        <label class="form-label">Monto: S/. 90.00</label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="AceptoTerminos" name="AceptoTerminos"
+                          value="true" required>
+                        <label class="form-check-label" for="AceptoTerminos">
+                          Acepto los términos y condiciones y la política de privacidad.
                         </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Enviar</button>
-                </form>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Inscribirse</button>
+                    </form>
+
+                    @if (TempData["Success"] != null)
+                    {
+                      <div class="alert alert-success mt-3">
+                        @TempData["Success"]
+                      </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                      <div class="alert alert-danger mt-3">
+                        @TempData["Error"]
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
             <p style="font-size: 11px">Cierre de Postulaciones </br> el @Model.FechaFin</p>
           </div>
         </div>
