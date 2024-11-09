@@ -105,6 +105,73 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("CertificadoInscripciones");
                 });
 
+            modelBuilder.Entity("EventoInscripcion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AceptoTerminos")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Apellidos")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Carrera")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Estado")
+                        .HasColumnType("text");
+
+                    b.Property<long>("EventoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Facultad")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaInscripcion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Matricula")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Nombres")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NumeroRecibo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventoId");
+
+                    b.ToTable("EventoInscripciones");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -845,6 +912,17 @@ namespace USMPWEB.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Certificado");
+                });
+
+            modelBuilder.Entity("EventoInscripcion", b =>
+                {
+                    b.HasOne("USMPWEB.Models.EventosInscripciones", "Evento")
+                        .WithMany()
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Evento");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

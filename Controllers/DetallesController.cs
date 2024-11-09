@@ -205,6 +205,84 @@ namespace USMPWEB.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> InscribirEvento(
+    string Nombres,
+    string Apellidos,
+    string Matricula,
+    string Facultad,
+    string Carrera,
+    string Direccion,
+    string Telefono,
+    string Email,
+    int EventoId,
+    bool AceptoTerminos)
+        {
+            try
+            {
+                var evento = await _context.DataEventosInscripciones
+                    .Include(e => e.Categoria)
+                    .Include(e => e.SubCategoria)
+                    .FirstOrDefaultAsync(e => e.Id == EventoId);
+
+                if (evento == null)
+                {
+                    TempData["Error"] = "Evento no encontrado";
+                    return RedirectToAction("Index", new { id = EventoId, tipo = "inscripcion" });
+                }
+
+                var inscripcion = new EventoInscripcion
+                {
+                    EventoId = EventoId,
+                    NumeroRecibo = $"EVT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}",
+                    Nombres = Nombres,
+                    Apellidos = Apellidos,
+                    Matricula = Matricula,
+                    Facultad = Facultad,
+                    Carrera = Carrera,
+                    Direccion = Direccion,
+                    Telefono = Telefono,
+                    Email = Email,
+                    Monto = 90.00M,
+                    FechaInscripcion = DateTime.UtcNow,
+                    Estado = "Pendiente",
+                    AceptoTerminos = AceptoTerminos
+                };
+
+                _context.EventoInscripciones.Add(inscripcion);
+                await _context.SaveChangesAsync();
+
+                var recibo = new ReciboViewModel
+                {
+                    InscripcionId = inscripcion.Id,
+                    NumeroRecibo = inscripcion.NumeroRecibo,
+                    Nombres = inscripcion.Nombres,
+                    Apellidos = inscripcion.Apellidos,
+                    Matricula = inscripcion.Matricula,
+                    Facultad = inscripcion.Facultad,
+                    Carrera = inscripcion.Carrera,
+                    Email = inscripcion.Email,
+                    Direccion = inscripcion.Direccion,
+                    Telefono = inscripcion.Telefono,
+                    Monto = inscripcion.Monto,
+                    FechaInscripcion = inscripcion.FechaInscripcion.ToLocalTime(),
+                    Evento = evento,
+                    Estado = inscripcion.Estado,
+                    TipoInscripcion = "Evento"
+                };
+
+                recibo.GenerarQR();
+
+                TempData["Recibo"] = JsonSerializer.Serialize(recibo);
+                return RedirectToAction("MostrarRecibo", new { id = inscripcion.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al procesar la inscripción al evento");
+                TempData["Error"] = "Ocurrió un error al procesar tu inscripción";
+                return RedirectToAction("Index", new { id = EventoId, tipo = "inscripcion" });
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> Inscribirse(
