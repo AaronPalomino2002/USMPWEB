@@ -1,0 +1,74 @@
+@model USMPWEB.Models.PagoEfectivoViewModel
+@{
+    ViewData["Title"] = "Recibo para Pago en Efectivo";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Recibo para Pago en Efectivo</h4>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <h5>Instrucciones de Pago</h5>
+                <p>Para completar su inscripción, realice el pago siguiendo estos pasos:</p>
+                <ol>
+                    <li>Guarde o imprima este recibo</li>
+                    <li>Acérquese a cualquier agencia bancaria o agente</li>
+                    <li>Realice el pago por el monto indicado</li>
+                    <li>Conserve su comprobante de pago</li>
+                </ol>
+            </div>
+
+            <div class="border p-4 mb-3">
+                <h5>Detalles del Pago</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Número de Recibo:</strong> @Model.NumeroRecibo</p>
+                        <p><strong>Estudiante:</strong> @Model.NombreEstudiante</p>
+                        <p><strong>Email:</strong> @Model.Email</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <h3 class="text-primary">Monto a Pagar: S/. @Model.Monto.ToString("N2")</h3>
+                        <p class="text-danger">
+                            <strong>Fecha límite de pago:</strong><br />
+                            @Model.FechaExpiracion.ToString("dd/MM/yyyy HH:mm")
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Importante:</strong>
+                <ul>
+                    <li>El pago debe realizarse antes de la fecha límite indicada</li>
+                    <li>Se ha enviado una copia de este recibo a su correo electrónico</li>
+                    <li>Conserve su comprobante de pago como respaldo</li>
+                </ul>
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">@TempData["Success"]</div>
+            }
+
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning">@TempData["Warning"]</div>
+            }
+
+            <div class="text-center mt-4">
+                <a href="javascript:window.print()" class="btn btn-secondary me-2">
+                    <i class="bi bi-printer"></i> Imprimir Recibo
+                </a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                    Volver al Inicio
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <small>Se ha enviado una copia del recibo al correo registrado: @Model.Email</small>
+        </div>
+    </div>
+</div>

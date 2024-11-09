@@ -38,6 +38,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddControllers(); // Permitir solo controladores de API
 builder.Services.AddControllersWithViews(); // Para controladores MVC
 
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 // Agregar IHttpClientFactory
 builder.Services.AddHttpClient();
 
