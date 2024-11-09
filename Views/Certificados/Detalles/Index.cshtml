@@ -9,16 +9,79 @@
 
       <div class="col-lg-8">
         <div class="row mt-4">
-            <h6>@Model.NombreCertificado</h6>
+          <h6>@Model.NombreCertificado</h6>
           <div class="col-md-9 align-content-center">
             <div class="content-imgs">
               <img style="width: 40px; height: 40px" src="~/ico/educacion.png" alt="role niños" />
-              <img style="width: 40px; height: 40px" src="~/ico/voley.png"  alt="role niños" />
-              <img style="width: 40px; height: 40px" src="~/ico/salud.png"  alt="role niños" />
+              <img style="width: 40px; height: 40px" src="~/ico/voley.png" alt="role niños" />
+              <img style="width: 40px; height: 40px" src="~/ico/salud.png" alt="role niños" />
             </div>
           </div>
           <div class="col-md-3">
-            <button class="btn btn-primary ms-auto mt-4 p-home__bg-primary">Únete</button>
+            <button type="button" class="btn btn-primary ms-auto mt-4 p-home__bg-primary" data-bs-toggle="modal"
+              data-bs-target="#uneteModal">
+              Únete
+            </button>
+            <!-- Modal de Inscripción -->
+            <div class="modal fade" id="uneteModal" tabindex="-1" aria-labelledby="uneteModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="uneteModalLabel">Inscripción al Certificado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" asp-controller="Detalles" asp-action="InscribirCertificado">
+                      <input type="hidden" name="CertificadoId" value="@Model.Id" />
+
+                      <div class="mb-1">
+                        <label for="Nombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="Nombres" name="Nombres" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Apellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="Apellidos" name="Apellidos" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Matricula" class="form-label">Matrícula</label>
+                        <input type="text" class="form-control" id="Matricula" name="Matricula" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Facultad" class="form-label">Facultad</label>
+                        <input type="text" class="form-control" id="Facultad" name="Facultad" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Carrera" class="form-label">Carrera</label>
+                        <input type="text" class="form-control" id="Carrera" name="Carrera" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Direccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="Direccion" name="Direccion" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Telefono" class="form-label">Teléfono</label>
+                        <input type="tel" class="form-control" id="Telefono" name="Telefono" required>
+                      </div>
+                      <div class="mb-1">
+                        <label for="Email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="Email" name="Email" required>
+                      </div>
+                      <div class="mb-1">
+                        <label class="form-label">Monto: S/. 90.00</label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="AceptoTerminos" name="AceptoTerminos"
+                          value="true" required>
+                        <label class="form-check-label" for="AceptoTerminos">
+                          Acepto los términos y condiciones y la política de privacidad.
+                        </label>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Inscribirse</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
             <p style="font-size: 11px">Cierre de Postulaciones </br> el @Model.FechaFin</p>
           </div>
         </div>
