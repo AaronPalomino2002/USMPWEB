@@ -5,16 +5,52 @@
 
 <div class="container mt-4">
     <div class="card">
-        <div class="card-body text-center">
-            <h2 class="text-success">¡Pago Exitoso!</h2>
-            <p>Tu pago ha sido procesado correctamente</p>
-            <p>Número de Recibo: @Model.NumeroRecibo</p>
-            <p>Monto: S/. @Model.Monto.ToString("N2")</p>
-            <p>Fecha: @Model.FechaPago?.ToString("dd/MM/yyyy HH:mm:ss")</p>
-            
-            <div class="mt-4">
-                <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Volver al Inicio</a>
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">¡Pago Exitoso!</h4>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 48px;"></i>
             </div>
+
+            <div class="alert alert-success">
+                <h5>Detalles de la Transacción</h5>
+                <p><strong>Número de Recibo:</strong> @Model.NumeroRecibo</p>
+                <p><strong>Fecha:</strong> @Model.FechaPago?.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                <p><strong>Monto:</strong> S/. @Model.Monto.ToString("N2")</p>
+                <p><strong>Estado:</strong> @Model.Estado</p>
+            </div>
+
+            @if (Model.Inscripcion != null)
+            {
+                <div class="alert alert-info">
+                    <h5>Datos del Estudiante</h5>
+                    <p><strong>Nombres:</strong> @Model.Inscripcion.Nombres @Model.Inscripcion.Apellidos</p>
+                    <p><strong>Email:</strong> @Model.Inscripcion.Email</p>
+                    <p><strong>Matrícula:</strong> @Model.Inscripcion.Matricula</p>
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @if (TempData["Warning"] != null)
+            {
+                <div class="alert alert-warning">
+                    @TempData["Warning"]
+                </div>
+            }
+
+            <div class="text-center mt-4">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Volver al Inicio</a>
+            </div>
+        </div>
+        <div class="card-footer text-muted text-center">
+            <small>Se ha enviado una copia del recibo al correo registrado: @Model.Inscripcion?.Email</small>
         </div>
     </div>
 </div>

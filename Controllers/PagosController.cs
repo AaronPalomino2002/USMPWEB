@@ -14,6 +14,7 @@ namespace USMPWEB.Controllers
         private readonly ILogger<PagosController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
         // Credenciales de prueba de Izipay
         private const string TEST_SHOP_ID = "89289758";
@@ -23,11 +24,13 @@ namespace USMPWEB.Controllers
         public PagosController(
             ILogger<PagosController> logger,
             ApplicationDbContext context,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailService emailService)
         {
             _logger = logger;
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         [HttpPost]
@@ -90,6 +93,70 @@ namespace USMPWEB.Controllers
             {
                 _logger.LogError(ex, "Error al iniciar el pago con tarjeta");
                 return BadRequest($"Error al procesar el pago: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> IniciarPagoEfectivo(int inscripcionId)
+        {
+            try
+            {
+                var inscripcion = await _context.CampanaInscripciones
+                    .Include(i => i.Campana)
+                    .FirstOrDefaultAsync(i => i.Id == inscripcionId);
+
+                if (inscripcion == null)
+                {
+                    return NotFound("Inscripción no encontrada");
+                }
+
+                // Generar número de recibo
+                var numeroRecibo = $"EFE-{DateTime.Now:yyyyMMdd}-{inscripcionId:D4}";
+
+                // Guardar información del pago
+                var pago = new Pago
+                {
+                    InscripcionId = inscripcionId,
+                    NumeroRecibo = numeroRecibo,
+                    Monto = inscripcion.Monto,
+                    Estado = "Pendiente",
+                    MetodoPago = "PagoEfectivo",
+                    FechaCreacion = DateTime.UtcNow,
+                    FechaExpiracion = DateTime.UtcNow.AddDays(2) // 48 horas para pagar
+                };
+
+                _context.Pagos.Add(pago);
+                await _context.SaveChangesAsync();
+
+                // Enviar correo con las instrucciones de pago
+                try
+                {
+                    await _emailService.SendReceiptEmailAsync(
+                        inscripcion.Email,
+                        $"{inscripcion.Nombres} {inscripcion.Apellidos}",
+                        pago
+                    );
+                    TempData["Success"] = "Se ha enviado el recibo a su correo electrónico.";
+                }
+                catch (Exception emailEx)
+                {
+                    _logger.LogError(emailEx, "Error al enviar el correo");
+                    TempData["Warning"] = "No se pudo enviar el correo con el recibo.";
+                }
+
+                return View("ReciboPagoEfectivo", new PagoEfectivoViewModel
+                {
+                    NumeroRecibo = numeroRecibo,
+                    Monto = inscripcion.Monto,
+                    FechaExpiracion = pago.FechaExpiracion.Value,
+                    NombreEstudiante = $"{inscripcion.Nombres} {inscripcion.Apellidos}",
+                    Email = inscripcion.Email
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al generar recibo de pago en efectivo");
+                TempData["Error"] = "Error al generar el recibo";
+                return RedirectToAction("Index", "Home");
             }
         }
 
@@ -188,21 +255,57 @@ namespace USMPWEB.Controllers
                 return View("ProcesarPagoTarjeta", modelo);
             }
         }
-
-        public IActionResult ConfirmacionPago(int id)
+        public async Task<IActionResult> ConfirmacionPago(int id)
         {
-            var pago = _context.Pagos
-                .Include(p => p.Inscripcion)
-                .FirstOrDefault(p => p.Id == id);
+            Pago pago = null;
 
-            if (pago == null)
+            try
             {
-                return NotFound();
+                _logger.LogInformation($"Obteniendo información del pago {id}");
+
+                // Incluimos la inscripción con todos sus datos
+                pago = await _context.Pagos
+                    .Include(p => p.Inscripcion)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (pago == null)
+                {
+                    _logger.LogWarning($"No se encontró el pago con ID {id}");
+                    return NotFound();
+                }
+
+                // Verificar que el pago esté completado y tengamos el email del usuario
+                if (pago.Estado == "Pagado" && pago.Inscripcion != null && !string.IsNullOrEmpty(pago.Inscripcion.Email))
+                {
+                    _logger.LogInformation($"Preparando envío de recibo al correo: {pago.Inscripcion.Email}");
+
+                    try
+                    {
+                        await _emailService.SendReceiptEmailAsync(
+                            pago.Inscripcion.Email, // Email del formulario de inscripción
+                            $"{pago.Inscripcion.Nombres} {pago.Inscripcion.Apellidos}",
+                            pago
+                        );
+
+                        TempData["Success"] = "El recibo ha sido enviado a su correo electrónico.";
+                        _logger.LogInformation($"Recibo enviado exitosamente a {pago.Inscripcion.Email}");
+                    }
+                    catch (Exception emailEx)
+                    {
+                        _logger.LogError(emailEx, $"Error al enviar el recibo por correo a {pago.Inscripcion.Email}");
+                        TempData["Warning"] = "El pago fue exitoso pero hubo un problema al enviar el recibo por correo. Por favor, contacte con soporte.";
+                    }
+                }
+
+                return View(pago);
             }
-
-            return View(pago);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error al procesar confirmación de pago {id}");
+                TempData["Error"] = "Ocurrió un error al procesar la confirmación";
+                return View(pago);
+            }
         }
-
     }
 }
 
