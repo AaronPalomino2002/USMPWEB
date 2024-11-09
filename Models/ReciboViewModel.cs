@@ -21,6 +21,7 @@ namespace USMPWEB.Models
         public DateTime FechaInscripcion { get; set; }
         public Campanas? Campana { get; set; }
         public Certificados? Certificado { get; set; }
+        public EventosInscripciones? Evento { get; set; }
         // Agregar propiedad para identificar el tipo
         public string? TipoInscripcion { get; set; } // "Campana" o "Certificado"
         public string? Estado { get; set; }

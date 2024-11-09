@@ -26,6 +26,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<USMPWEB.Models.EventosInscripciones> DataEventosInscripciones { get; set; }
     public DbSet<CampanaInscripcion> CampanaInscripciones { get; set; } = null!;
     public DbSet<CertificadoInscripcion> CertificadoInscripciones { get; set; }
+    public DbSet<EventoInscripcion> EventoInscripciones { get; set; }
     public DbSet<Pago> Pagos { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,6 +55,6 @@ public class ApplicationDbContext : IdentityDbContext
         .HasOne(ci => ci.Certificado)
         .WithMany()
         .HasForeignKey(ci => ci.CertificadoId);
-               
+
     }
 }

@@ -33,30 +33,41 @@
                                     </div>
                                 </div>
                                 <hr>
-                                @if (Model.TipoInscripcion == "Certificado")
-                                    {
-                                        <div class="row mb-4">
-                                            <div class="col-12">
-                                                <h5>Detalles del Certificado</h5>
-                                                <p><strong>Nombre:</strong> @Model.Certificado.NombreCertificado</p>
-                                                <p><strong>Categoría:</strong> @Model.Certificado.Categoria?.nomCategoria</p>
-                                                <p><strong>Subcategoría:</strong> @Model.Certificado.SubCategoria?.nomSubCategoria</p>
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="row mb-4">
-                                            <div class="col-12">
-                                                <h5>Detalles de la Campaña</h5>
-                                                <p><strong>Nombre:</strong> @Model.Campana.Titulo</p>
-                                                <p><strong>Categoría:</strong> @Model.Campana.Categoria?.nomCategoria</p>
-                                                <p><strong>Subcategorías:</strong> 
-                                                    @string.Join(", ", Model.Campana.SubCategorias.Select(s => s.nomSubCategoria))
-                                                </p>
-                                            </div>
-                                        </div>
-                                    }
+                                                    @if (Model.TipoInscripcion == "Evento")
+                    {
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5>Detalles del Evento</h5>
+                                <p><strong>Nombre:</strong> @Model.Evento.Titulo</p>
+                                <p><strong>Categoría:</strong> @Model.Evento.Categoria?.nomCategoria</p>
+                                <p><strong>Subcategoría:</strong> @Model.Evento.SubCategoria?.nomSubCategoria</p>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.TipoInscripcion == "Certificado")
+                    {
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5>Detalles del Certificado</h5>
+                                <p><strong>Nombre:</strong> @Model.Certificado.NombreCertificado</p>
+                                <p><strong>Categoría:</strong> @Model.Certificado.Categoria?.nomCategoria</p>
+                                <p><strong>Subcategoría:</strong> @Model.Certificado.SubCategoria?.nomSubCategoria</p>
+                            </div>
+                        </div>
+                    }
+                    else // Campaña
+                    {
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5>Detalles de la Campaña</h5>
+                                <p><strong>Nombre:</strong> @Model.Campana.Titulo</p>
+                                <p><strong>Categoría:</strong> @Model.Campana.Categoria?.nomCategoria</p>
+                                <p><strong>Subcategorías:</strong> 
+                                    @string.Join(", ", Model.Campana.SubCategorias.Select(s => s.nomSubCategoria))
+                                </p>
+                            </div>
+                        </div>
+                    }
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h5>Datos del Estudiante</h5>
