@@ -25,6 +25,7 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<USMPWEB.Models.SubCategoria> DataSubCategoria { get; set; }
     public DbSet<USMPWEB.Models.EventosInscripciones> DataEventosInscripciones { get; set; }
     public DbSet<CampanaInscripcion> CampanaInscripciones { get; set; } = null!;
+    public DbSet<CertificadoInscripcion> CertificadoInscripciones { get; set; }
     public DbSet<Pago> Pagos { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +49,11 @@ public class ApplicationDbContext : IdentityDbContext
 
         modelBuilder.Entity<Pago>()
             .Property(p => p.NumeroRecibo)
-            .HasMaxLength(50);        
+            .HasMaxLength(50);
+        modelBuilder.Entity<CertificadoInscripcion>()
+        .HasOne(ci => ci.Certificado)
+        .WithMany()
+        .HasForeignKey(ci => ci.CertificadoId);
+               
     }
 }

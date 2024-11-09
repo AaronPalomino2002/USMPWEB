@@ -105,17 +105,119 @@ namespace USMPWEB.Controllers
             }
         }
         [HttpPost]
+        public async Task<IActionResult> InscribirCertificado(
+            string Nombres,
+            string Apellidos,
+            string Matricula,
+            string Facultad,
+            string Carrera,
+            string Direccion,
+            string Telefono,
+            string Email,
+            int CertificadoId,
+            bool AceptoTerminos)
+        {
+            try
+            {
+                var certificado = await _context.DataCertificados
+                    .Include(c => c.Categoria)
+                    .Include(c => c.SubCategoria)
+                    .FirstOrDefaultAsync(c => c.Id == CertificadoId);
+
+                if (certificado == null)
+                {
+                    TempData["Error"] = "Certificado no encontrado";
+                    return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
+                }
+
+                // Crear la inscripción
+                var inscripcion = new CertificadoInscripcion
+                {
+                    CertificadoId = CertificadoId,
+                    NumeroRecibo = $"CERT-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid().ToString().Substring(0, 4)}",
+                    Nombres = Nombres,
+                    Apellidos = Apellidos,
+                    Matricula = Matricula,
+                    Facultad = Facultad,
+                    Carrera = Carrera,
+                    Direccion = Direccion,
+                    Telefono = Telefono,
+                    Email = Email,
+                    Monto = 90.00M,
+                    FechaInscripcion = DateTime.UtcNow,
+                    Estado = "Pendiente",
+                    AceptoTerminos = AceptoTerminos
+                };
+
+                _context.CertificadoInscripciones.Add(inscripcion);
+                await _context.SaveChangesAsync();
+
+                // Crear el recibo
+                var recibo = new ReciboViewModel
+                {
+                    InscripcionId = inscripcion.Id,
+                    NumeroRecibo = inscripcion.NumeroRecibo,
+                    Nombres = inscripcion.Nombres,
+                    Apellidos = inscripcion.Apellidos,
+                    Matricula = inscripcion.Matricula,
+                    Facultad = inscripcion.Facultad,
+                    Carrera = inscripcion.Carrera,
+                    Email = inscripcion.Email,
+                    Direccion = inscripcion.Direccion,
+                    Telefono = inscripcion.Telefono,
+                    Monto = inscripcion.Monto,
+                    FechaInscripcion = inscripcion.FechaInscripcion.ToLocalTime(),
+                    Certificado = certificado,
+                    Estado = inscripcion.Estado,
+                    TipoInscripcion = "Certificado" // Indicar que es una inscripción de certificado
+                };
+
+                recibo.GenerarQR();
+
+                TempData["Recibo"] = JsonSerializer.Serialize(recibo);
+                return RedirectToAction("MostrarReciboCertificado", new { id = inscripcion.Id });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al procesar la inscripción");
+                TempData["Error"] = "Ocurrió un error al procesar tu inscripción";
+                return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult MostrarReciboCertificado(int id)
+        {
+            try
+            {
+                if (TempData["Recibo"] == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+
+                var recibo = JsonSerializer.Deserialize<ReciboViewModel>((string)TempData["Recibo"]);
+                return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", recibo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al mostrar el recibo");
+                TempData["Error"] = "Ocurrió un error al mostrar el recibo";
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Inscribirse(
-    string Nombres,
-    string Apellidos,
-    string Matricula,
-    string Facultad,
-    string Carrera,
-    string Direccion,
-    string Telefono,
-    string Email,
-    int CampanaId,
-    bool AceptoTerminos)
+            string Nombres,
+            string Apellidos,
+            string Matricula,
+            string Facultad,
+            string Carrera,
+            string Direccion,
+            string Telefono,
+            string Email,
+            int CampanaId,
+            bool AceptoTerminos)
         {
             try
             {
