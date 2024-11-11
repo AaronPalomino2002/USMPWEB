@@ -211,34 +211,38 @@ namespace USMPWEB.Controllers
             return View(new Campanas());
         }
 
-
-        // Acción para procesar la creación de una nueva campaña
         [HttpPost]
         public async Task<IActionResult> CrearCampana(Campanas campana)
         {
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
-                ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
-                return View(campana);
-            }
-
-            if (campana.SubCategoriaIds == null || campana.SubCategoriaIds.Count < 1 || campana.SubCategoriaIds.Count > 3)
-            {
-                ModelState.AddModelError("SubCategoriaIds", "Debe seleccionar entre 1 y 3 subcategorías");
-                ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
-                ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
-                return View(campana);
-            }
-
             try
             {
-                // Obtener las subcategorías seleccionadas
+                if (campana.FechaFin < campana.FechaInicio)
+                {
+                    ModelState.AddModelError("FechaFin", "La fecha de fin no puede ser anterior a la fecha de inicio");
+                }
+
+                if (campana.SubCategoriaIds == null || campana.SubCategoriaIds.Count < 1 || campana.SubCategoriaIds.Count > 3)
+                {
+                    ModelState.AddModelError("SubCategoriaIds", "Debe seleccionar entre 1 y 3 subcategorías");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    // Recargar las listas para el formulario
+                    ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
+                    ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
+                    return View(campana);
+                }
+
+                // Obtener las subcategorías
                 var subcategorias = await _context.DataSubCategoria
                     .Where(s => campana.SubCategoriaIds.Contains(s.IdSubCategoria))
                     .ToListAsync();
 
                 campana.SubCategorias = subcategorias;
+
+                // Asegurarnos que el Id sea 0
+                campana.Id = 0;
 
                 await _context.DataCampanas.AddAsync(campana);
                 await _context.SaveChangesAsync();
@@ -248,14 +252,13 @@ namespace USMPWEB.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", "Error al crear la campaña: " + ex.Message);
+                _logger.LogError(ex, "Error al crear la campaña");
+                TempData["Error"] = "Error al crear la campaña: " + ex.Message;
                 ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
                 ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
                 return View(campana);
             }
         }
-
-
         [HttpGet]
         public async Task<IActionResult> EditarCampana(int id)
         {
@@ -282,14 +285,6 @@ namespace USMPWEB.Controllers
                 return NotFound();
             }
 
-            if (SubCategoriaIds == null || SubCategoriaIds.Count < 1 || SubCategoriaIds.Count > 3)
-            {
-                ModelState.AddModelError("SubCategoriaIds", "Debe seleccionar entre 1 y 3 subcategorías");
-                ViewBag.Categorias = await _context.DataCategoria.ToListAsync();
-                ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
-                return View(campana);
-            }
-
             try
             {
                 var campanaExistente = await _context.DataCampanas
@@ -308,6 +303,9 @@ namespace USMPWEB.Controllers
                 campanaExistente.Imagen = campana.Imagen;
                 campanaExistente.FechaInicio = campana.FechaInicio;
                 campanaExistente.FechaFin = campana.FechaFin;
+                // Agregar los nuevos campos
+                campanaExistente.Requisitos = campana.Requisitos;
+                campanaExistente.Monto = campana.Monto;
 
                 // Actualizar subcategorías
                 campanaExistente.SubCategorias.Clear();
