@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 using USMPWEB.Models; // Importar el modelo
 using USMPWEB.Data;
 using ClasificacionModelo;
-
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace USMPWEB.Controllers
 {
@@ -26,65 +27,59 @@ namespace USMPWEB.Controllers
         }
 
         [HttpPost("Registro")]
-        public async Task<IActionResult> RegistroPost(string Nombre, string Correo, int Celular, string Comentario)
+       public async Task<IActionResult> RegistroPost(string Nombre, string Correo, int Celular, string Comentario)
+{
+    // Crear una instancia del input del modelo de clasificación
+    MLModelTextClassification.ModelInput sampleData = new MLModelTextClassification.ModelInput
+    {
+        Comentario = Comentario
+    };
+
+    // Obtener la predicción del modelo
+    MLModelTextClassification.ModelOutput output = MLModelTextClassification.Predict(sampleData);
+    
+    // Obtener las etiquetas con las puntuaciones
+    var sortedScoresWithLabel = MLModelTextClassification.PredictAllLabels(sampleData).ToList();
+    var scoreKeyFirst = sortedScoresWithLabel[0].Key;
+    var scoreValueFirst = sortedScoresWithLabel[0].Value;
+    var scoreKeySecond = sortedScoresWithLabel[1].Key;
+    var scoreValueSecond = sortedScoresWithLabel[1].Value;
+
+    // Clasificar el comentario basado en la etiqueta y la puntuación
+    string clasificacionComentario = scoreKeyFirst == "1" ? "Positivo" : "Negativo";
+    double porcentaje = scoreKeyFirst == "1" ? scoreValueFirst : 1 - scoreValueFirst;
+
+    // Mostrar en la consola si el comentario fue clasificado como positivo o negativo
+    Console.WriteLine($"Comentario: {Comentario}");
+    Console.WriteLine($"Clasificación: {clasificacionComentario}");
+    Console.WriteLine($"Porcentaje: {porcentaje * 100}%");
+    Console.WriteLine($"Primer Etiqueta: {scoreKeyFirst,-40} Puntuación: {scoreValueFirst,-20}");
+    Console.WriteLine($"Segunda Etiqueta: {scoreKeySecond,-40} Puntuación: {scoreValueSecond,-20}");
+    
+    if (ModelState.IsValid)
+    {
+        // Crear una nueva instancia del modelo Contacto
+        var nuevoContacto = new Contacto
         {
+            Nombre = Nombre,
+            Correo = Correo,
+            Celular = Celular,
+            Comentario = Comentario, // Guardar el comentario original
+            Category = clasificacionComentario // Guardar la clasificación
+        };
 
-            //FALTA CONVERTIR LOS PARAMETROS EN OBJETOS PARA HACER EL LLMADO AL MENSAJE
+        // Agregar a la base de datos
+        _context.DataContacto.Add(nuevoContacto);
+        await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
 
-            MLModelTextClassification.ModelInput sampleData = new MLModelTextClassification.ModelInput(){
-                // Comentario = 
-            };
-             MLModelTextClassification.ModelOutput output = MLModelTextClassification.Predict(sampleData);
-            //   Console.WriteLine($"{output.Label}{output.PredictedLabel}");
+        // Redirigir a la misma página del formulario para limpiar los campos
+        return RedirectToAction("Registro");
+    }
 
-             // output.Score.ToList().ForEach(score => Console.WriteLine(score));
+    // Si el modelo no es válido, simplemente devolver la vista con los errores
+    return View("Registro");
+}
 
-            var sortedScoresWithLabel = MLModelTextClassification.PredictAllLabels(sampleData);
-            var scoreKey = sortedScoresWithLabel.ToList()[0].Key;
-            var scoreValueFirst = sortedScoresWithLabel.ToList()[0].Value;
-            var scoreKeySecond = sortedScoresWithLabel.ToList()[1].Key;
-            var scoreValueSecond = sortedScoresWithLabel.ToList()[1].Value;
-            // foreach(var score in sortedScoresWithLabel){
-            //     Console.WriteLine($"{score.Key,-40}{score.Value,-20}");
-            // }
-
-            if(scoreKey == "1"){
-                    
-            if(scoreValueFirst > 0.5){
-                Comentario = "Negativo";
-            }
-            else{
-                Comentario = "Positivo";
-            }
-
-            }
-            
-                Console.WriteLine($"{scoreKey,-40}{scoreValueFirst,-20}");
-                Console.WriteLine($"{scoreKeySecond,-40}{scoreValueSecond,-20}");
-
-
-            if (ModelState.IsValid)
-            {
-                // Crear una nueva instancia del modelo Contacto
-                var nuevoContacto = new Contacto
-                {
-                    Nombre = Nombre,
-                    Correo = Correo,
-                    Celular = Celular,
-                    Comentario = Comentario
-                };
-
-                // Agregar a la base de datos
-                _context.DataContacto.Add(nuevoContacto);
-                await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
-
-                // Redirigir a la misma página del formulario para limpiar los campos
-                return RedirectToAction("Registro");
-            }
-
-            // Si el modelo no es válido, simplemente devolver la vista con los errores
-            return View("Registro");
-        }
 
         [HttpGet("error")] // Agregar este atributo
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
