@@ -29,6 +29,32 @@
             margin-bottom: 2rem;
         }
 
+        .btn-crear {
+            background-color: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-crear:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .btn-crear i {
+            font-size: 1.2rem;
+        }
+
         .btn-back {
             color: white;
             text-decoration: none;
@@ -123,8 +149,8 @@
                     <h1 class="h3 mb-0">Campañas Registradas</h1>
                 </div>
                 <a href="@Url.Action("CrearCampana", "Admin")" class="btn-crear">
-                    <i class="lni lni-plus"></i>
-                    Nuevas Campañas
+                    <i class="lni lni-plus-circle"></i>
+                    Nueva Campaña
                 </a>
             </div>
         </div>
@@ -159,6 +185,7 @@
                             <th>Subcategorías</th> <!-- Nueva columna -->
                             <th>Fecha Inicio</th>
                             <th>Fecha Fin</th>
+                            <th>Monto</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -213,6 +240,7 @@
                                 </td>
                                 <td>@campana.FechaInicio.ToString("dd/MM/yyyy")</td>
                                 <td>@campana.FechaFin.ToString("dd/MM/yyyy")</td>
+                                <td>S/. @campana.Monto.ToString("N2")</td>
                                 <td>
                                     <span class="@estadoClase">@estadoTexto</span>
                                 </td>

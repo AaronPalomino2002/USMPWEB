@@ -32,18 +32,36 @@ public class ApplicationDbContext : IdentityDbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Campanas>()
-            .HasMany(c => c.SubCategorias)
-            .WithMany(s => s.Campanas)
-            .UsingEntity(
-                "CampanaSubCategoria",
-                l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
-                r => r.HasOne(typeof(Campanas)).WithMany().HasForeignKey("CampanasId"),
-                j =>
-                {
-                    j.HasKey("CampanasId", "SubCategoriasIdSubCategoria");
-                    j.ToTable("CampanaSubCategoria");
-                });
+        modelBuilder.Entity<Campanas>(entity =>
+        {
+            // Configura la tabla y la clave primaria
+            entity.ToTable("t_campanas");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).UseIdentityColumn();
+
+            // Configura los nuevos campos
+            entity.Property(e => e.Monto)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.Requisitos)
+                .IsRequired();
+
+            // Mantén la configuración existente de la relación muchos a muchos
+            entity.HasMany(c => c.SubCategorias)
+                .WithMany(s => s.Campanas)
+                .UsingEntity(
+                    "CampanaSubCategoria",
+                    l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
+                    r => r.HasOne(typeof(Campanas)).WithMany().HasForeignKey("CampanasId"),
+                    j =>
+                    {
+                        j.HasKey("CampanasId", "SubCategoriasIdSubCategoria");
+                        j.ToTable("CampanaSubCategoria");
+                    });
+        });
+
+        // Resto de tus configuraciones existentes
         modelBuilder.Entity<CampanaInscripcion>()
             .Property(c => c.NumeroRecibo)
             .HasMaxLength(50);
@@ -51,10 +69,10 @@ public class ApplicationDbContext : IdentityDbContext
         modelBuilder.Entity<Pago>()
             .Property(p => p.NumeroRecibo)
             .HasMaxLength(50);
-        modelBuilder.Entity<CertificadoInscripcion>()
-        .HasOne(ci => ci.Certificado)
-        .WithMany()
-        .HasForeignKey(ci => ci.CertificadoId);
 
+        modelBuilder.Entity<CertificadoInscripcion>()
+            .HasOne(ci => ci.Certificado)
+            .WithMany()
+            .HasForeignKey(ci => ci.CertificadoId);
     }
 }

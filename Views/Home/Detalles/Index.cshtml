@@ -88,7 +88,7 @@
                         <input type="email" class="form-control" id="Email" name="Email" required>
                       </div>
                       <div class="mb-1">
-                        <label class="form-label">Monto: S/. 90.00</label>
+                        <label class="form-label">Monto: S/. @Model.Monto.ToString("N2")</label>
                       </div>
                       <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="AceptoTerminos" name="AceptoTerminos"
@@ -123,28 +123,16 @@
         <div style="margin-top: 2rem" class="card">
           <div class="card-body">
             <h6>Sobre el Programa</h6>
-            <p>Estudiantes de 9no ciclo en adelante y/o egresados en Psicología</p>
-            <ul style="font-size: 11px; padding: 0px">
-              <li>Brindar atención psicológica gratuita</li>
-              <li>Brindar un programa adecuado para el paciente</li>
-              <li>Elaboración de informes psicológicos</li>
-              <li>Toma de pruebas psicológicas de requerir</li>
-            </ul>
+            <p>@Model.Descripcion</p>
           </div>
         </div>
 
         <div class="card">
           <div class="card-body">
             <h6>Requisitos e Indicaciones</h6>
-            <ul style="font-size: 11px; padding: 0px">
-              <li>1. Disponibilidad: 25 horas a la semana - Horario flexible</li>
-              <li>2. Compromiso hacia el programa</li>
-              <li>3. Resolución de problemas</li>
-              <li>4. Comunicación efectiva</li>
-              <li>5. Trabajo en equipo</li>
-              <li>6. Modalidad remota</li>
-              <li>7. Experiencia en el área deseable</li>
-            </ul>
+            <div style="font-size: 11px; padding: 0px">
+              @Html.Raw(Model.Requisitos?.Replace("\n", "<br/>"))
+            </div>
           </div>
         </div>
       </div>
