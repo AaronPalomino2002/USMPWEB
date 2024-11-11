@@ -62,9 +62,28 @@ public class ApplicationDbContext : IdentityDbContext
         });
 
         // Resto de tus configuraciones existentes
-        modelBuilder.Entity<CampanaInscripcion>()
-            .Property(c => c.NumeroRecibo)
-            .HasMaxLength(50);
+        modelBuilder.Entity<CampanaInscripcion>(entity =>
+            {
+                entity.ToTable("t_campana_inscripciones");
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("Id")
+                    .UseIdentityAlwaysColumn()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(c => c.NumeroRecibo)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.HasOne(d => d.Campana)
+                    .WithMany()
+                    .HasForeignKey(d => d.CampanaId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.Property(e => e.FechaInscripcion)
+                    .HasColumnType("timestamp with time zone");
+            });
 
         modelBuilder.Entity<Pago>()
             .Property(p => p.NumeroRecibo)

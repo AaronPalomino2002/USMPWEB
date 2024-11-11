@@ -419,9 +419,10 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AceptoTerminos")
                         .HasColumnType("boolean");
@@ -482,7 +483,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("CampanaId");
 
-                    b.ToTable("t_campana_inscripciones");
+                    b.ToTable("t_campana_inscripciones", (string)null);
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Campanas", b =>
@@ -1007,7 +1008,6 @@ namespace USMPWEB.Data.Migrations
                     b.HasOne("USMPWEB.Models.Campanas", "Campana")
                         .WithMany()
                         .HasForeignKey("CampanaId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Campana");
