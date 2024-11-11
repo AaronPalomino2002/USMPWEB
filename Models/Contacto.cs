@@ -17,5 +17,6 @@ namespace USMPWEB.Models
         public string? Correo { get; set; }
         public int Celular { get; set; }
         public string? Comentario { get; set; }
+        public string ? Category {get;set;}
     }
 }

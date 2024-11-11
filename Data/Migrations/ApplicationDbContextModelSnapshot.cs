@@ -613,6 +613,9 @@ namespace USMPWEB.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
                     b.Property<int>("Celular")
                         .HasColumnType("integer");
 
