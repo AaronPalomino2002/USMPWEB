@@ -644,7 +644,8 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -667,6 +668,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Titulo")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Vacantes")

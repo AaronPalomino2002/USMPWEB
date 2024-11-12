@@ -1,0 +1,142 @@
+@model USMPWEB.Models.EventosInscripciones
+@{
+    ViewData["Title"] = "Crear Evento";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crear Evento - USMP</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #C8102E;
+        }
+
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .admin-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .custom-file-input {
+            cursor: pointer;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="admin-header">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <a href="@Url.Action("EventosInscripciones", "Admin")" class="btn-back me-3">
+                    <i class="lni lni-arrow-left"></i>
+                    Volver
+                </a>
+                <h1 class="h3 mb-0">Nuevo Evento</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <form asp-action="CrearEventosInscripciones" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Titulo" class="form-label">Título</label>
+                        <input asp-for="Titulo" class="form-control" required />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Vacantes" class="form-label">Vacantes</label>
+                        <input asp-for="Vacantes" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="FechaInicio" class="form-label">Fecha de inicio</label>
+                    <input type="date" asp-for="FechaInicio" value="" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="FechaFin" class="form-label">Fecha de Fin</label>
+                    <input type="date" asp-for="FechaFin" value="" class="form-control" required />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                        <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias" required>
+                            <option value="">Seleccione una categoría</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="subCategoriaId" class="form-label">Subcategoría</label>
+                        <select asp-for="subCategoriaId" class="form-select" asp-items="ViewBag.SubCategorias" required>
+                            <option value="">Seleccione una subcategoría</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Imagen" class="form-label">Ingrese url de la imagen</label>
+                    <input asp-for="Imagen" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" asp-for="Culminado" class="form-check-input" />
+                        <label class="form-check-label" asp-for="Culminado">Evento Culminado</label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="@Url.Action("EventosInscripciones", "Admin")" class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

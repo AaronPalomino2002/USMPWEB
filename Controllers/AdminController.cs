@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using USMPWEB.Models;
 using USMPWEB.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace USMPWEB.Controllers
 {
@@ -153,24 +154,6 @@ namespace USMPWEB.Controllers
             return RedirectToAction(nameof(Alumnos));
         }
         [HttpGet]
-        public async Task<IActionResult> Campanas()
-        {
-            if (!User.Identity.IsAuthenticated ||
-                User.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value != "True")
-            {
-                return RedirectToAction("Index", "Login");
-            }
-
-            var campanas = await _context.DataCampanas
-                .Include(c => c.Categoria)
-                .Include(c => c.SubCategorias)
-                .OrderByDescending(c => c.FechaInicio)
-                .ToListAsync();
-
-            return View(campanas);
-        }
-
-        [HttpGet]
         public async Task<IActionResult> EventosInscripciones()
         {
             if (!User.Identity.IsAuthenticated ||
@@ -189,16 +172,190 @@ namespace USMPWEB.Controllers
         }
 
         [HttpGet]
-        public IActionResult CrearEventoInscripciones()
+        public async Task<IActionResult> CrearEventosInscripciones()
         {
-            // Cargar categorías y subcategorías desde la base de datos
-            var categorias = _context.DataCategoria.ToList();
-            var subCategorias = _context.DataSubCategoria.ToList();
+            ViewBag.Categorias = await _context.DataCategoria
+                .Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.nomCategoria
+                }).ToListAsync();
 
-            ViewBag.Categoria = categorias ?? new List<Categoria>();          // Cargar categorías en ViewBag
-            ViewBag.SubCategoria = subCategorias ?? new List<SubCategoria>(); // Cargar subcategorías en ViewBag
+            ViewBag.SubCategorias = await _context.DataSubCategoria
+                .Select(s => new SelectListItem
+                {
+                    Value = s.IdSubCategoria.ToString(),
+                    Text = s.nomSubCategoria
+                }).ToListAsync();
+
+            // Establecer valor por defecto de Culminado a "No"
+            var evento = new EventosInscripciones
+            {
+                Culminado = "No"
+            };
 
             return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CrearEventosInscripciones(EventosInscripciones eventosInscripciones)
+        {
+            try
+            {
+                // Asegurarnos que el ID sea 0 para que PostgreSQL lo genere
+                eventosInscripciones.Id = 0;
+
+                // Desactivar el tracking para evitar problemas de entidad
+                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+                eventosInscripciones.Culminado = eventosInscripciones.Culminado == "true" ? "Si" : "No";
+
+                // Agregar el nuevo evento
+                var entry = _context.DataEventosInscripciones.Add(eventosInscripciones);
+
+                // Marcar el ID como generado por la base de datos
+                entry.Property(e => e.Id).IsTemporary = true;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Mensaje"] = "Evento creado correctamente";
+                return RedirectToAction(nameof(EventosInscripciones));
+            }
+            catch (Exception ex)
+            {
+                // Log del error completo
+                _logger.LogError(ex, "Error completo al crear evento: {Message}", ex.ToString());
+
+                ViewBag.Categorias = await _context.DataCategoria
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdCategoria.ToString(),
+                        Text = c.nomCategoria
+                    }).ToListAsync();
+                ViewBag.SubCategorias = await _context.DataSubCategoria
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.IdSubCategoria.ToString(),
+                        Text = s.nomSubCategoria
+                    }).ToListAsync();
+
+                TempData["Error"] = $"Error al crear el evento: {ex.Message}. Inner Exception: {ex.InnerException?.Message}";
+                return View(eventosInscripciones);
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditarEventoInscripcion(long id)
+        {
+            var eventoInscripcion = await _context.DataEventosInscripciones
+                .Include(c => c.Categoria)
+                .Include(c => c.SubCategoria)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (eventoInscripcion == null)
+            {
+                return NotFound();
+            }
+
+            // Cargar los dropdowns
+            ViewBag.Categorias = await _context.DataCategoria
+                .Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.nomCategoria
+                }).ToListAsync();
+
+            ViewBag.SubCategorias = await _context.DataSubCategoria
+                .Select(s => new SelectListItem
+                {
+                    Value = s.IdSubCategoria.ToString(),
+                    Text = s.nomSubCategoria
+                }).ToListAsync();
+
+            return View(eventoInscripcion);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditarEventoInscripcion(long id, EventosInscripciones eventosInscripciones)
+        {
+            if (id != eventosInscripciones.Id)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var eventoExistente = await _context.DataEventosInscripciones
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (eventoExistente == null)
+                {
+                    return NotFound();
+                }
+
+                // Actualizar las propiedades del evento
+                eventoExistente.Titulo = eventosInscripciones.Titulo;
+                eventoExistente.Descripcion = eventosInscripciones.Descripcion;
+                eventoExistente.Vacantes = eventosInscripciones.Vacantes;
+                eventoExistente.Culminado = eventosInscripciones.CulminadoCheckbox ? "Si" : "No";
+                eventoExistente.CategoriaId = eventosInscripciones.CategoriaId;
+                eventoExistente.subCategoriaId = eventosInscripciones.subCategoriaId;
+                eventoExistente.Imagen = eventosInscripciones.Imagen;
+                eventoExistente.FechaInicio = eventosInscripciones.FechaInicio;
+                eventoExistente.FechaFin = eventosInscripciones.FechaFin;
+
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = "Evento actualizado correctamente";
+                return RedirectToAction(nameof(EventosInscripciones));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al actualizar el evento: " + ex.Message;
+                return View(eventosInscripciones);
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> EliminarEventoInscripcion(long id)
+        {
+            try
+            {
+                var eventoInscripcion = await _context.DataEventosInscripciones
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (eventoInscripcion == null)
+                {
+                    TempData["Error"] = "EventoInscripcion no encontrado";
+                    return RedirectToAction(nameof(EventosInscripciones));
+                }
+
+                _context.DataEventosInscripciones.Remove(eventoInscripcion);
+                await _context.SaveChangesAsync();
+
+                TempData["Mensaje"] = "EventoInscripcion eliminado correctamente";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al eliminar el EventoInscripcion: " + ex.Message;
+                _logger.LogError(ex, "Error al eliminar EventoInscripcion ID: {Id}", id);
+            }
+
+            return RedirectToAction(nameof(EventosInscripciones));
+        }
+        [HttpGet]
+        public async Task<IActionResult> Campanas()
+        {
+            if (!User.Identity.IsAuthenticated ||
+                User.Claims.FirstOrDefault(c => c.Type == "IsAdmin")?.Value != "True")
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var campanas = await _context.DataCampanas
+                .Include(c => c.Categoria)
+                .Include(c => c.SubCategorias)
+                .OrderByDescending(c => c.FechaInicio)
+                .ToListAsync();
+
+            return View(campanas);
         }
 
 
