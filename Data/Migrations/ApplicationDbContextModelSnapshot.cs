@@ -575,7 +575,8 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -609,7 +610,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("subCategoriaId");
 
-                    b.ToTable("t_certificados");
+                    b.ToTable("t_certificados", (string)null);
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Contacto", b =>
@@ -644,7 +645,8 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("Id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
@@ -667,6 +669,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Titulo")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Vacantes")
