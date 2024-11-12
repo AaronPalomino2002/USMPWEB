@@ -60,7 +60,12 @@ public class ApplicationDbContext : IdentityDbContext
                         j.ToTable("CampanaSubCategoria");
                     });
         });
-
+        modelBuilder.Entity<Certificados>(entity =>
+            {
+                entity.ToTable("t_certificados");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).UseIdentityColumn(); // Asegúrate de que esté presente
+            });
         // Resto de tus configuraciones existentes
         modelBuilder.Entity<CampanaInscripcion>(entity =>
             {

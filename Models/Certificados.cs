@@ -9,9 +9,10 @@ namespace USMPWEB.Models
 {
     [Table("t_certificados")]
     public class Certificados
-    {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    { 
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("Id")]
         public long Id { get; set; }
         public string? NombreCertificado { get; set; }
         public string? Descripcion { get; set; }

@@ -1,95 +1,271 @@
 @model USMPWEB.Models.Certificados
+
 @{
+
     ViewData["Title"] = "Editar Certificado";
+
     Layout = null;
+
 }
 
+
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
+
     <meta charset="utf-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Editar Certificado - USMP</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+
     <style>
-        /* Usar los mismos estilos que en las otras vistas */
         :root {
+
             --primary-color: #C8102E;
+
         }
+
+
 
         body {
+
             background-color: #f4f4f4;
+
         }
+
+
 
         .admin-header {
+
             background-color: var(--primary-color);
+
             color: white;
+
             padding: 1rem;
+
             margin-bottom: 2rem;
+
         }
+
+
 
         .form-container {
+
             background: white;
+
             border-radius: 10px;
+
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
             padding: 2rem;
+
             margin-bottom: 2rem;
+
         }
 
+
+
         .btn-back {
+
             color: white;
+
             text-decoration: none;
+
             display: flex;
+
             align-items: center;
+
             gap: 0.5rem;
+
+        }
+
+
+
+        .preview-image {
+
+            max-width: 200px;
+
+            max-height: 200px;
+
+            margin-top: 1rem;
+
         }
     </style>
+
 </head>
 
 <body>
+
     <header class="admin-header">
+
         <div class="container">
+
             <div class="d-flex align-items-center">
+
                 <a href="@Url.Action("Certificados", "Admin")" class="btn-back me-3">
+
                     <i class="lni lni-arrow-left"></i>
+
                     Volver
+
                 </a>
+
                 <h1 class="h3 mb-0">Editar Certificado</h1>
+
             </div>
+
         </div>
+
     </header>
 
+
+
     <div class="container">
+
         <div class="form-container">
+
             <form asp-action="EditarCertificado" method="post">
+
                 <input type="hidden" asp-for="Id" />
 
-                <div class="mb-3">
-                    <label asp-for="NombreCertificado" class="form-label">Nombre del Certificado</label>
-                    <input asp-for="NombreCertificado" class="form-control" required />
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="NombreCertificado" class="form-label">Nombre del Certificado</label>
+
+                        <input asp-for="NombreCertificado" class="form-control" required />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="FechaExpedicion" class="form-label">Fecha de Expedición</label>
+
+                        <input type="date" asp-for="FechaExpedicion" class="form-control" required />
+
+                    </div>
+
                 </div>
 
+
+
                 <div class="mb-3">
-                    <label asp-for="FechaExpedicion" class="form-label">Fecha de Expedición</label>
-                    <input type="date" asp-for="FechaExpedicion" class="form-control" required
-                        value="@Model.FechaExpedicion.ToString("yyyy-MM-dd")" />
+
+                    <label asp-for="Descripcion" class="form-label">Descripción</label>
+
+                    <textarea asp-for="Descripcion" class="form-control" rows="4" required></textarea>
+
                 </div>
+
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="CategoriaId" class="form-label">Categoría</label>
+
+                        <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias" required>
+
+                            <option value="">Seleccione una categoría</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="subCategoriaId" class="form-label">Subcategoría</label>
+
+                        <select asp-for="subCategoriaId" class="form-select" asp-items="ViewBag.SubCategorias" required>
+
+                            <option value="">Seleccione una subcategoría</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label asp-for="Imagen" class="form-label">URL de la imagen</label>
+
+                    <input asp-for="Imagen" class="form-control" required />
+
+                    @if (!string.IsNullOrEmpty(Model.Imagen))
+
+                    {
+
+                        <img src="@Model.Imagen" alt="Imagen actual" class="preview-image mt-2" />
+
+                    }
+
+                </div>
+
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="FechaInicio" class="form-label">Fecha de Inicio</label>
+
+                        <input type="date" asp-for="FechaInicio" class="form-control" required />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label asp-for="FechaFin" class="form-label">Fecha de Fin</label>
+
+                        <input type="date" asp-for="FechaFin" class="form-control" required />
+
+                    </div>
+
+                </div>
+
+
 
                 <div class="d-flex justify-content-end gap-2">
+
                     <a href="@Url.Action("Certificados", "Admin")" class="btn btn-secondary">
+
                         Cancelar
+
                     </a>
+
                     <button type="submit" class="btn btn-primary">
+
                         Guardar Cambios
+
                     </button>
+
                 </div>
+
             </form>
+
         </div>
+
     </div>
 
+
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

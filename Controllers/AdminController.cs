@@ -654,10 +654,23 @@ namespace USMPWEB.Controllers
 
             return View(certificados);
         }
-
         [HttpGet]
-        public IActionResult CrearCertificado()
+        public async Task<IActionResult> CrearCertificado()
         {
+            ViewBag.Categorias = await _context.DataCategoria
+                .Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.nomCategoria
+                }).ToListAsync();
+
+            ViewBag.SubCategorias = await _context.DataSubCategoria
+                .Select(s => new SelectListItem
+                {
+                    Value = s.IdSubCategoria.ToString(),
+                    Text = s.nomSubCategoria
+                }).ToListAsync();
+
             return View();
         }
 
@@ -666,28 +679,71 @@ namespace USMPWEB.Controllers
         {
             try
             {
-                _context.DataCertificados.Add(certificado);
+                // Asegurarnos que el ID sea 0 para que PostgreSQL lo genere
+                certificado.Id = 0;
+
+                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+
+                // Agregar el nuevo evento
+                var entry = _context.DataCertificados.Add(certificado);
+
+                // Marcar el ID como generado por la base de datos
+                entry.Property(e => e.Id).IsTemporary = true;
+
                 await _context.SaveChangesAsync();
+
                 TempData["Mensaje"] = "Certificado creado correctamente";
                 return RedirectToAction(nameof(Certificados));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "Error al crear el certificado: " + ex.Message;
+                // Log del error completo
+                _logger.LogError(ex, "Error completo al crear evento: {Message}", ex.ToString());
+
+                ViewBag.Categorias = await _context.DataCategoria
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdCategoria.ToString(),
+                        Text = c.nomCategoria
+                    }).ToListAsync();
+                ViewBag.SubCategorias = await _context.DataSubCategoria
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.IdSubCategoria.ToString(),
+                        Text = s.nomSubCategoria
+                    }).ToListAsync();
+
+                TempData["Error"] = $"Error al crear el certificado: {ex.Message}. Inner Exception: {ex.InnerException?.Message}";
                 return View(certificado);
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> EditarCertificado(long id)
         {
             var certificado = await _context.DataCertificados
+                .Include(c => c.Categoria)
+                .Include(c => c.SubCategoria)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (certificado == null)
             {
                 return NotFound();
             }
+
+            ViewBag.Categorias = await _context.DataCategoria
+                .Select(c => new SelectListItem
+                {
+                    Value = c.IdCategoria.ToString(),
+                    Text = c.nomCategoria
+                }).ToListAsync();
+
+            ViewBag.SubCategorias = await _context.DataSubCategoria
+                .Select(s => new SelectListItem
+                {
+                    Value = s.IdSubCategoria.ToString(),
+                    Text = s.nomSubCategoria
+                }).ToListAsync();
 
             return View(certificado);
         }
@@ -711,6 +767,12 @@ namespace USMPWEB.Controllers
                 }
 
                 certificadoExistente.NombreCertificado = certificado.NombreCertificado;
+                certificadoExistente.Descripcion = certificado.Descripcion;
+                certificadoExistente.CategoriaId = certificado.CategoriaId;
+                certificadoExistente.subCategoriaId = certificado.subCategoriaId;
+                certificadoExistente.Imagen = certificado.Imagen;
+                certificadoExistente.FechaInicio = certificado.FechaInicio;
+                certificadoExistente.FechaFin = certificado.FechaFin;
                 certificadoExistente.FechaExpedicion = certificado.FechaExpedicion;
 
                 await _context.SaveChangesAsync();
@@ -720,6 +782,19 @@ namespace USMPWEB.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al actualizar el certificado: " + ex.Message;
+                // Recargar los dropdowns
+                ViewBag.Categorias = await _context.DataCategoria
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.IdCategoria.ToString(),
+                        Text = c.nomCategoria
+                    }).ToListAsync();
+                ViewBag.SubCategorias = await _context.DataSubCategoria
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.IdSubCategoria.ToString(),
+                        Text = s.nomSubCategoria
+                    }).ToListAsync();
                 return View(certificado);
             }
         }
