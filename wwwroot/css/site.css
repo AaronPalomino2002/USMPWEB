@@ -590,3 +590,12 @@ body {
   background: rgba(213, 0, 0, 0.7); /* Color del pulgar (parte que se mueve) */
   border-radius: 10px; /* Esquinas redondeadas para el pulgar */
 }
+.campaign .row .col-md-4 {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.container-fluid .col-m-12 .row .col-md-6 .row .col-md-5 {
+  padding-right: 0px;
+  padding-left: 0px;
+}

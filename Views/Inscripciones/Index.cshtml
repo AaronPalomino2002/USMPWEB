@@ -66,16 +66,28 @@
                 <div class="card-body">
                   <h6 class="card-title">@e_inscripcion.Titulo</h6>
                   <ul class="d-flex m-1 p-0">
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes
-                    </li>
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion
-                    </li>
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología
-                    </li>
-                  </ul>
+                                        @if (e_inscripcion.SubCategorias != null && e_inscripcion.SubCategorias.Any())
+                                        {
+                                            foreach (var subcategoria in e_inscripcion.SubCategorias)
+                                            {
+                                                <li class="p-2 m-1 p-home__bg-gray-class text-center"
+                                                    style="border: 1px solid; border-radius: 25px;">
+                                                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
+                                    diccionario *@
+                                                    <img style="width: 20px; margin-right: 5px;"
+                                                        src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
+                                                        onerror="this.src='/ico/default.png'">
+                                                    @subcategoria.nomSubCategoria
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="p-2 m-1 p-home__bg-gray-class text-center">
+                                                Sin subcategorías
+                                            </li>
+                                        }
+                                    </ul>
                   <p class="card-text p-home__descrip mt-2">
                     @e_inscripcion.Descripcion
                   </p>

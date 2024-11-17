@@ -23,7 +23,7 @@ namespace USMPWEB.Controllers.Api
         {
             var eventosInscripciones = await _context.Set<EventosInscripciones>()
                 .Include(e => e.Categoria)
-                .Include(e => e.SubCategoria)
+                .Include(e => e.SubCategorias)
                 .ToListAsync();
             return Ok(eventosInscripciones);
         }
@@ -34,7 +34,7 @@ namespace USMPWEB.Controllers.Api
         {
             var eventoInscripcion = await _context.Set<EventosInscripciones>()
                 .Include(e => e.Categoria)
-                .Include(e => e.SubCategoria)
+                .Include(e => e.SubCategorias)
                 .FirstOrDefaultAsync(e => e.Id == id);
 
             if (eventoInscripcion == null)

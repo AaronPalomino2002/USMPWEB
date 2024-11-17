@@ -164,7 +164,7 @@ namespace USMPWEB.Controllers
 
             var e_inscripciones = await _context.DataEventosInscripciones
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .OrderByDescending(c => c.FechaInicio)
                 .ToListAsync();
 
@@ -248,7 +248,7 @@ namespace USMPWEB.Controllers
         {
             var eventoInscripcion = await _context.DataEventosInscripciones
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (eventoInscripcion == null)
@@ -298,7 +298,7 @@ namespace USMPWEB.Controllers
                 eventoExistente.Vacantes = eventosInscripciones.Vacantes;
                 eventoExistente.Culminado = eventosInscripciones.CulminadoCheckbox ? "Si" : "No";
                 eventoExistente.CategoriaId = eventosInscripciones.CategoriaId;
-                eventoExistente.subCategoriaId = eventosInscripciones.subCategoriaId;
+                eventoExistente.SubCategoriaIds = eventosInscripciones.SubCategoriaIds;
                 eventoExistente.Imagen = eventosInscripciones.Imagen;
                 eventoExistente.FechaInicio = eventosInscripciones.FechaInicio;
                 eventoExistente.FechaFin = eventosInscripciones.FechaFin;

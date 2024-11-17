@@ -222,7 +222,7 @@ namespace USMPWEB.Controllers
             {
                 var evento = await _context.DataEventosInscripciones
                     .Include(e => e.Categoria)
-                    .Include(e => e.SubCategoria)
+                    .Include(e => e.SubCategorias)
                     .FirstOrDefaultAsync(e => e.Id == EventoId);
 
                 if (evento == null)

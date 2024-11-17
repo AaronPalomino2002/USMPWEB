@@ -18,5 +18,6 @@ namespace USMPWEB.Models
         public string? imgSubCategoria {get; set;}
         [JsonIgnore]
         public virtual ICollection<Campanas> Campanas { get; set; } = new List<Campanas>();
+        public virtual ICollection<EventosInscripciones> EventosInscripciones { get; set; } = new List<EventosInscripciones>();
     }
 }

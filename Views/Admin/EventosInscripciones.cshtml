@@ -141,7 +141,19 @@
                         <td>@e_inscripcion.Vacantes</td>
                         <td>@e_inscripcion.Culminado</td>
                         <td>@(e_inscripcion.Categoria?.nomCategoria ?? "No asignada")</td>
-                        <td>@(e_inscripcion.SubCategoria?.nomSubCategoria ?? "No asignada")</td>
+                        <td>
+                                    @if (e_inscripcion.SubCategorias != null && e_inscripcion.SubCategorias.Any())
+                                    {
+                                        foreach (var subcat in e_inscripcion.SubCategorias)
+                                        {
+                                            <span class="badge bg-secondary me-1">@subcat.nomSubCategoria</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin subcategorías</span>
+                                    }
+                                </td>
                         <td>
                             @if (!string.IsNullOrEmpty(e_inscripcion.Imagen))
                             {

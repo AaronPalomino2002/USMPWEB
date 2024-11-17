@@ -60,6 +60,30 @@ public class ApplicationDbContext : IdentityDbContext
                         j.ToTable("CampanaSubCategoria");
                     });
         });
+        modelBuilder.Entity<EventosInscripciones>(entity =>
+        {
+            // Configura la tabla y la clave primaria
+            entity.ToTable("t_eventosInscripciones");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).UseIdentityColumn();
+
+
+            entity.Property(e => e.Requisitos)
+                .IsRequired();
+
+            // Mantén la configuración existente de la relación muchos a muchos
+            entity.HasMany(c => c.SubCategorias)
+                .WithMany(s => s.EventosInscripciones)
+                .UsingEntity(
+                    "EventoSubCategoria",
+                    l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
+                    r => r.HasOne(typeof(EventosInscripciones)).WithMany().HasForeignKey("EventosInscripcionesId"),
+                    j =>
+                    {
+                        j.HasKey("EventosInscripcionesId", "SubCategoriasIdSubCategoria");
+                        j.ToTable("EventoSubCategoria");
+                    });
+        });
         modelBuilder.Entity<Certificados>(entity =>
             {
                 entity.ToTable("t_certificados");

@@ -46,8 +46,10 @@ namespace USMPWEB.Controllers
     var scoreValueSecond = sortedScoresWithLabel[1].Value;
 
     // Clasificar el comentario basado en la etiqueta y la puntuación
-    string clasificacionComentario = scoreKeyFirst == "1" ? "Positivo" : "Negativo";
-    double porcentaje = scoreKeyFirst == "1" ? scoreValueFirst : 1 - scoreValueFirst;
+   // Clasificar el comentario basado en las puntuaciones de las etiquetas
+string clasificacionComentario = scoreValueFirst > scoreValueSecond ? (scoreKeyFirst == "1" ? "Positivo" : "Negativo") : (scoreKeySecond == "1" ? "Positivo" : "Negativo");
+double porcentaje = scoreValueFirst > scoreValueSecond ? scoreValueFirst : scoreValueSecond;
+
 
     // Mostrar en la consola si el comentario fue clasificado como positivo o negativo
     Console.WriteLine($"Comentario: {Comentario}");

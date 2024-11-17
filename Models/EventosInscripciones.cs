@@ -16,9 +16,14 @@ namespace USMPWEB.Models
         [Column("Id")]
         public long Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "El título es requerido")]
         public string? Titulo { get; set; }
+        
+        [Required(ErrorMessage = "La descripción es requerida")]
         public string? Descripcion { get; set; }
+
+        [Required(ErrorMessage = "Los requisitos son requeridos")]
+        public string? Requisitos { get; set; }
         public string? Vacantes { get; set; }
         public string? Culminado { get; set; }
         [NotMapped]
@@ -27,16 +32,20 @@ namespace USMPWEB.Models
             get => Culminado == "Si";
             set => Culminado = value ? "Si" : "No";
         }
+        
+        [Required(ErrorMessage = "Debe seleccionar una categoría")]
         public long? CategoriaId { get; set; }
         public string? Imagen { get; set; }
-        public long? subCategoriaId { get; set; }
+
+        [Required(ErrorMessage = "Debe seleccionar entre 1 y 3 subcategorías")]
+        [NotMapped]
+        public List<long> SubCategoriaIds { get; set; } = new List<long>();
         public DateOnly FechaInicio { get; set; }
         public DateOnly FechaFin { get; set; }
 
         [ForeignKey("CategoriaId")]
         public virtual Categoria? Categoria { get; set; }
 
-        [ForeignKey("subCategoriaId")]
-        public virtual SubCategoria? SubCategoria { get; set; }
+        public virtual ICollection<SubCategoria> SubCategorias { get; set; } = new List<SubCategoria>();
     }
 }

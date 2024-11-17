@@ -171,6 +171,21 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("EventoInscripciones");
                 });
 
+            modelBuilder.Entity("EventoSubCategoria", b =>
+                {
+                    b.Property<long>("EventosInscripcionesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SubCategoriasIdSubCategoria")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EventosInscripcionesId", "SubCategoriasIdSubCategoria");
+
+                    b.HasIndex("SubCategoriasIdSubCategoria");
+
+                    b.ToTable("EventoSubCategoria", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -651,12 +666,14 @@ namespace USMPWEB.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
+                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<string>("Culminado")
                         .HasColumnType("text");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("FechaFin")
@@ -668,6 +685,10 @@ namespace USMPWEB.Data.Migrations
                     b.Property<string>("Imagen")
                         .HasColumnType("text");
 
+                    b.Property<string>("Requisitos")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Titulo")
                         .IsRequired()
                         .HasColumnType("text");
@@ -675,16 +696,11 @@ namespace USMPWEB.Data.Migrations
                     b.Property<string>("Vacantes")
                         .HasColumnType("text");
 
-                    b.Property<long?>("subCategoriaId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoriaId");
 
-                    b.HasIndex("subCategoriaId");
-
-                    b.ToTable("t_eventosInscripciones");
+                    b.ToTable("t_eventosInscripciones", (string)null);
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Facultad", b =>
@@ -938,6 +954,21 @@ namespace USMPWEB.Data.Migrations
                     b.Navigation("Evento");
                 });
 
+            modelBuilder.Entity("EventoSubCategoria", b =>
+                {
+                    b.HasOne("USMPWEB.Models.EventosInscripciones", null)
+                        .WithMany()
+                        .HasForeignKey("EventosInscripcionesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("USMPWEB.Models.SubCategoria", null)
+                        .WithMany()
+                        .HasForeignKey("SubCategoriasIdSubCategoria")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1055,15 +1086,11 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
                         .WithMany()
-                        .HasForeignKey("CategoriaId");
-
-                    b.HasOne("USMPWEB.Models.SubCategoria", "SubCategoria")
-                        .WithMany()
-                        .HasForeignKey("subCategoriaId");
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Categoria");
-
-                    b.Navigation("SubCategoria");
                 });
 
             modelBuilder.Entity("USMPWEB.Models.Pago", b =>
