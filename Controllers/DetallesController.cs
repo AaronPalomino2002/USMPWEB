@@ -64,6 +64,7 @@ namespace USMPWEB.Controllers
                 {
                     var e_inscripcion = await _context.DataEventosInscripciones
                         .Include(e => e.Categoria)
+                        .Include(e => e.SubCategorias)
                         .FirstOrDefaultAsync(e => e.Id == id);
 
                     if (e_inscripcion == null)
@@ -77,6 +78,8 @@ namespace USMPWEB.Controllers
                 else if (tipo.Equals("certificados", StringComparison.OrdinalIgnoreCase))
                 {
                     var certificados = await _context.DataCertificados
+                        .Include(c => c.Categoria)
+                        .Include(c => c.SubCategorias)
                         .FirstOrDefaultAsync(c => c.Id == id);
 
                     if (certificados == null)
@@ -121,7 +124,7 @@ namespace USMPWEB.Controllers
             {
                 var certificado = await _context.DataCertificados
                     .Include(c => c.Categoria)
-                    .Include(c => c.SubCategoria)
+                    .Include(c => c.SubCategorias)
                     .FirstOrDefaultAsync(c => c.Id == CertificadoId);
 
                 if (certificado == null)

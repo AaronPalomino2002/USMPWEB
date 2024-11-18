@@ -56,13 +56,12 @@
 
         @foreach (var e_inscripcion in e_inscripciones)
         {
-          <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion"
-            data-date="ultimaSemana" data-career="ingenieraComputacion">
+            <div class="col-md-6 mb-2">
             <div class="row no-gutters nav-bar-bgprimary">
-              <div class="col-md-4">
+              <div class="col-md-5">
                 <img src="@e_inscripcion.Imagen" class="p-home__img-card" alt="Imagen de @e_inscripcion.Titulo" />
               </div>
-              <div class="col-md-8">
+              <div class="col-md-7">
                 <div class="card-body">
                   <h6 class="card-title">@e_inscripcion.Titulo</h6>
                   <ul class="d-flex m-1 p-0">

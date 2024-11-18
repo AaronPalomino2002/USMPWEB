@@ -56,26 +56,37 @@
 
         @foreach (var certificado in certificados)
         {
-          <div class="col-md-6 mb-2 campaign" data-title="Fabricación Digital Modelado 3D" data-category="educacion"
-            data-date="ultimaSemana" data-career="ingenieraComputacion">
+            <div class="col-md-6 mb-2">
             <div class="row no-gutters nav-bar-bgprimary">
-              <div class="col-md-4">
+              <div class="col-md-5">
                 <img src="@certificado.Imagen" class="p-home__img-card" alt="Imagen de @certificado.NombreCertificado" />
               </div>
-              <div class="col-md-8">
+              <div class="col-md-7">
                 <div class="card-body">
                   <h6 class="card-title">@certificado.NombreCertificado</h6>
                   <ul class="d-flex m-1 p-0">
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/jovenes.png">Jovenes
-                    </li>
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/educacion.png">Educacion
-                    </li>
-                    <li class="p-2 m-1 p-home__bg-gray-class text-center" style="border: 1px solid; border-radius: 25px;">
-                      <img style="width: 20px; margin-right: 5px;" src="~/ico/tecnologia.png">Tecnología
-                    </li>
-                  </ul>
+                                        @if (certificado.SubCategorias != null && certificado.SubCategorias.Any())
+                                        {
+                                            foreach (var subcategoria in certificado.SubCategorias)
+                                            {
+                                                <li class="p-2 m-1 p-home__bg-gray-class text-center"
+                                                    style="border: 1px solid; border-radius: 25px;">
+                                                    @* Si tienes iconos específicos para cada subcategoría, puedes usar un switch o un
+                                    diccionario *@
+                                                    <img style="width: 20px; margin-right: 5px;"
+                                                        src="~/ico/@(subcategoria.nomSubCategoria.ToLower()).png"
+                                                        onerror="this.src='/ico/default.png'">
+                                                    @subcategoria.nomSubCategoria
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li class="p-2 m-1 p-home__bg-gray-class text-center">
+                                                Sin subcategorías
+                                            </li>
+                                        }
+                                    </ul>
                   <p class="card-text p-home__descrip mt-2">
                     @certificado.Descripcion
                   </p>

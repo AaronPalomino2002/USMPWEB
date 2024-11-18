@@ -90,12 +90,24 @@
                             <option value="">Seleccione una categoría</option>
                         </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="subCategoriaId" class="form-label">Subcategoría</label>
-                        <select asp-for="subCategoriaId" class="form-select" asp-items="ViewBag.SubCategorias" required>
-                            <option value="">Seleccione una subcategoría</option>
-                        </select>
+                    <div class="col-md-6">
+                    <label class="form-label">Subcategorías (Seleccione de 1 a 3)</label>
+                    <div class="subcategorias-container border rounded p-3">
+                        @foreach (var subCategoria in ViewBag.SubCategoria)
+                        {
+                            <div class="form-check">
+                                <input type="checkbox" name="SubCategoriaIds" value="@subCategoria.IdSubCategoria"
+                                    class="form-check-input" id="subcat_@subCategoria.IdSubCategoria" />
+                                <label class="form-check-label" for="subcat_@subCategoria.IdSubCategoria">
+                                    @subCategoria.nomSubCategoria
+                                </label>
+                            </div>
+                        }
                     </div>
+                    <div class="text-danger" id="subcategoriasError">
+                        <span asp-validation-for="SubCategoriaIds"></span>
+                    </div>
+                </div>
                 </div>
 
                 <div class="mb-3">

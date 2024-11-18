@@ -104,6 +104,21 @@ namespace USMPWEB.Data.Migrations
                     b.ToTable("CertificadoInscripciones");
                 });
 
+            modelBuilder.Entity("CertificadoSubCategoria", b =>
+                {
+                    b.Property<long>("CertificadosId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("SubCategoriasIdSubCategoria")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CertificadosId", "SubCategoriasIdSubCategoria");
+
+                    b.HasIndex("SubCategoriasIdSubCategoria");
+
+                    b.ToTable("CertificadoSubCategoria", (string)null);
+                });
+
             modelBuilder.Entity("EventoInscripcion", b =>
                 {
                     b.Property<int>("Id")
@@ -596,9 +611,11 @@ namespace USMPWEB.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
+                        .IsRequired()
                         .HasColumnType("bigint");
 
                     b.Property<string>("Descripcion")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("FechaExpedicion")
@@ -611,19 +628,23 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("Imagen")
+                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("NombreCertificado")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long?>("subCategoriaId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Requisitos")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoriaId");
-
-                    b.HasIndex("subCategoriaId");
 
                     b.ToTable("t_certificados", (string)null);
                 });
@@ -943,6 +964,21 @@ namespace USMPWEB.Data.Migrations
                     b.Navigation("Certificado");
                 });
 
+            modelBuilder.Entity("CertificadoSubCategoria", b =>
+                {
+                    b.HasOne("USMPWEB.Models.Certificados", null)
+                        .WithMany()
+                        .HasForeignKey("CertificadosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("USMPWEB.Models.SubCategoria", null)
+                        .WithMany()
+                        .HasForeignKey("SubCategoriasIdSubCategoria")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EventoInscripcion", b =>
                 {
                     b.HasOne("USMPWEB.Models.EventosInscripciones", "Evento")
@@ -1071,15 +1107,11 @@ namespace USMPWEB.Data.Migrations
                 {
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
                         .WithMany()
-                        .HasForeignKey("CategoriaId");
-
-                    b.HasOne("USMPWEB.Models.SubCategoria", "SubCategoria")
-                        .WithMany()
-                        .HasForeignKey("subCategoriaId");
+                        .HasForeignKey("CategoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Categoria");
-
-                    b.Navigation("SubCategoria");
                 });
 
             modelBuilder.Entity("USMPWEB.Models.EventosInscripciones", b =>

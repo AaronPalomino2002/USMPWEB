@@ -89,6 +89,24 @@ public class ApplicationDbContext : IdentityDbContext
                 entity.ToTable("t_certificados");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).UseIdentityColumn(); // Asegúrate de que esté presente
+
+                 entity.Property(e => e.Requisitos)
+                .IsRequired();
+
+            // Mantén la configuración existente de la relación muchos a muchos
+            entity.HasMany(c => c.SubCategorias)
+                .WithMany(s => s.Certificados)
+                .UsingEntity(
+                    "CertificadoSubCategoria",
+                    l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
+                    r => r.HasOne(typeof(Certificados)).WithMany().HasForeignKey("CertificadosId"),
+                    j =>
+                    {
+                        j.HasKey("CertificadosId", "SubCategoriasIdSubCategoria");
+                        j.ToTable("CertificadoSubCategoria");
+                    });
+
+
             });
         // Resto de tus configuraciones existentes
         modelBuilder.Entity<CampanaInscripcion>(entity =>

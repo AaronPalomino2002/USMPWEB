@@ -137,7 +137,19 @@
                                 <td>@certificado.Descripcion</td>
                                 <td>@certificado.FechaExpedicion.ToString("dd/MM/yyyy")</td>
                                 <td>@(certificado.Categoria?.nomCategoria ?? "No asignada")</td>
-                                <td>@(certificado.SubCategoria?.nomSubCategoria ?? "No asignada")</td>
+                                <td>
+                                    @if (certificado.SubCategorias != null && certificado.SubCategorias.Any())
+                                    {
+                                        foreach (var subcat in certificado.SubCategorias)
+                                        {
+                                            <span class="badge bg-secondary me-1">@subcat.nomSubCategoria</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin subcategorías</span>
+                                    }
+                                </td>
                                 <td>
                                     @if (!string.IsNullOrEmpty(certificado.Imagen))
                                     {

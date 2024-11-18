@@ -23,7 +23,7 @@ namespace USMPWEB.Controllers.Api
         {
             var certificados = await _context.Set<Certificados>()
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .ToListAsync();
             return Ok(certificados);
         }
@@ -34,7 +34,7 @@ namespace USMPWEB.Controllers.Api
         {
             var certificado = await _context.Set<Certificados>()
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (certificado == null)

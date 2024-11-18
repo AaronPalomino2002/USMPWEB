@@ -647,7 +647,7 @@ namespace USMPWEB.Controllers
 
             var certificados = await _context.DataCertificados
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .OrderByDescending(c => c.FechaExpedicion)
                 .ToListAsync();
 
@@ -723,7 +723,7 @@ namespace USMPWEB.Controllers
         {
             var certificado = await _context.DataCertificados
                 .Include(c => c.Categoria)
-                .Include(c => c.SubCategoria)
+                .Include(c => c.SubCategorias)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (certificado == null)
@@ -769,7 +769,7 @@ namespace USMPWEB.Controllers
                 certificadoExistente.NombreCertificado = certificado.NombreCertificado;
                 certificadoExistente.Descripcion = certificado.Descripcion;
                 certificadoExistente.CategoriaId = certificado.CategoriaId;
-                certificadoExistente.subCategoriaId = certificado.subCategoriaId;
+                certificadoExistente.SubCategoriaIds = certificado.SubCategoriaIds;
                 certificadoExistente.Imagen = certificado.Imagen;
                 certificadoExistente.FechaInicio = certificado.FechaInicio;
                 certificadoExistente.FechaFin = certificado.FechaFin;

@@ -19,5 +19,6 @@ namespace USMPWEB.Models
         [JsonIgnore]
         public virtual ICollection<Campanas> Campanas { get; set; } = new List<Campanas>();
         public virtual ICollection<EventosInscripciones> EventosInscripciones { get; set; } = new List<EventosInscripciones>();
+        public virtual ICollection<Certificados> Certificados { get; set; } = new List<Certificados>();
     }
 }
