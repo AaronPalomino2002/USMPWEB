@@ -21,10 +21,7 @@ namespace USMPWEB.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetEventosInscripciones()
         {
-            var eventosInscripciones = await _context.Set<EventosInscripciones>()
-                .Include(e => e.Categoria)
-                .Include(e => e.SubCategorias)
-                .ToListAsync();
+            var eventosInscripciones = await _context.Set<EventosInscripciones>().Include(c => c.Categoria).Include(c => c.SubCategorias).ToListAsync();
             return Ok(eventosInscripciones);
         }
 

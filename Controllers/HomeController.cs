@@ -22,7 +22,7 @@ namespace USMPWEB.Controllers
         public async Task<IActionResult> Index(string searchTerm, string sortOrder, string dateFilter,
                                          string categoryFilter, string careerFilter)
         {
-            ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
+               ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
 
             try
             {

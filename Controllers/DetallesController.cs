@@ -37,6 +37,8 @@ namespace USMPWEB.Controllers
 
         public async Task<IActionResult> Index(int id, string tipo)
         {
+              ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
+        
             try
             {
                 if (string.IsNullOrEmpty(tipo))

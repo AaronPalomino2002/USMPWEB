@@ -35,7 +35,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 // Agrega soporte para controladores de API y vistas
-builder.Services.AddControllers(); // Permitir solo controladores de API
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+}); 
+
+// Permitir solo controladores de API
 builder.Services.AddControllersWithViews(); // Para controladores MVC
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));

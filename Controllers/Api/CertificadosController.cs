@@ -21,10 +21,7 @@ namespace USMPWEB.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetCertificados()
         {
-            var certificados = await _context.Set<Certificados>()
-                .Include(c => c.Categoria)
-                .Include(c => c.SubCategorias)
-                .ToListAsync();
+            var certificados = await _context.Set<Certificados>().Include(c => c.Categoria).Include(c => c.SubCategorias).ToListAsync();
             return Ok(certificados);
         }
 

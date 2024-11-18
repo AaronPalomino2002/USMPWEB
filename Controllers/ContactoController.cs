@@ -23,6 +23,7 @@ namespace USMPWEB.Controllers
         [HttpGet("Registro")]
         public IActionResult Registro()
         {
+            ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
             return View();
         }
 
