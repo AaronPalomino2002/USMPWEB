@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql.EntityFrameworkCore.PostgreSQL;
 using USMPWEB.Data;
 using Microsoft.OpenApi.Models;
+using USMPWEB.Services; // Agregar este using
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,7 @@ builder.Services.AddControllersWithViews(); // Para controladores MVC
 
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>(); // Agregar esta línea
 
 // Agregar IHttpClientFactory
 builder.Services.AddHttpClient();

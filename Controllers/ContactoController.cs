@@ -13,11 +13,13 @@ namespace USMPWEB.Controllers
     {
         private readonly ILogger<ContactoController> _logger;
         private readonly ApplicationDbContext _context; // Inyectar el DbContext
+        private readonly IEmailSender _emailSender;  // Agregar esto
 
-        public ContactoController(ILogger<ContactoController> logger, ApplicationDbContext context)
+        public ContactoController(ILogger<ContactoController> logger, ApplicationDbContext context,IEmailSender emailSender)
         {
             _logger = logger;
             _context = context;
+            _emailSender = emailSender;
         }
 
         [HttpGet("Registro")]
@@ -28,60 +30,71 @@ namespace USMPWEB.Controllers
         }
 
         [HttpPost("Registro")]
-       public async Task<IActionResult> RegistroPost(string Nombre, string Correo, int Celular, string Comentario)
-{
-    // Crear una instancia del input del modelo de clasificación
-    MLModelTextClassification.ModelInput sampleData = new MLModelTextClassification.ModelInput
-    {
-        Comentario = Comentario
-    };
-
-    // Obtener la predicción del modelo
-    MLModelTextClassification.ModelOutput output = MLModelTextClassification.Predict(sampleData);
-    
-    // Obtener las etiquetas con las puntuaciones
-    var sortedScoresWithLabel = MLModelTextClassification.PredictAllLabels(sampleData).ToList();
-    var scoreKeyFirst = sortedScoresWithLabel[0].Key;
-    var scoreValueFirst = sortedScoresWithLabel[0].Value;
-    var scoreKeySecond = sortedScoresWithLabel[1].Key;
-    var scoreValueSecond = sortedScoresWithLabel[1].Value;
-
-    // Clasificar el comentario basado en la etiqueta y la puntuación
-   // Clasificar el comentario basado en las puntuaciones de las etiquetas
-string clasificacionComentario = scoreValueFirst > scoreValueSecond ? (scoreKeyFirst == "1" ? "Positivo" : "Negativo") : (scoreKeySecond == "1" ? "Positivo" : "Negativo");
-double porcentaje = scoreValueFirst > scoreValueSecond ? scoreValueFirst : scoreValueSecond;
-
-
-    // Mostrar en la consola si el comentario fue clasificado como positivo o negativo
-    Console.WriteLine($"Comentario: {Comentario}");
-    Console.WriteLine($"Clasificación: {clasificacionComentario}");
-    Console.WriteLine($"Porcentaje: {porcentaje * 100}%");
-    Console.WriteLine($"Primer Etiqueta: {scoreKeyFirst,-40} Puntuación: {scoreValueFirst,-20}");
-    Console.WriteLine($"Segunda Etiqueta: {scoreKeySecond,-40} Puntuación: {scoreValueSecond,-20}");
-    
-    if (ModelState.IsValid)
-    {
-        // Crear una nueva instancia del modelo Contacto
-        var nuevoContacto = new Contacto
+        public async Task<IActionResult> RegistroPost(string Nombre, string Correo, int Celular, string Comentario)
         {
-            Nombre = Nombre,
-            Correo = Correo,
-            Celular = Celular,
-            Comentario = Comentario, // Guardar el comentario original
-            Category = clasificacionComentario // Guardar la clasificación
-        };
+            // Crear una instancia del input del modelo de clasificación
+            MLModelTextClassification.ModelInput sampleData = new MLModelTextClassification.ModelInput
+            {
+                Comentario = Comentario
+            };
 
-        // Agregar a la base de datos
-        _context.DataContacto.Add(nuevoContacto);
-        await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
+            // Obtener la predicción del modelo
+            MLModelTextClassification.ModelOutput output = MLModelTextClassification.Predict(sampleData);
 
-        // Redirigir a la misma página del formulario para limpiar los campos
-        return RedirectToAction("Registro");
-    }
+            // Obtener las etiquetas con las puntuaciones
+            var sortedScoresWithLabel = MLModelTextClassification.PredictAllLabels(sampleData).ToList();
+            var scoreKeyFirst = sortedScoresWithLabel[0].Key;
+            var scoreValueFirst = sortedScoresWithLabel[0].Value;
+            var scoreKeySecond = sortedScoresWithLabel[1].Key;
+            var scoreValueSecond = sortedScoresWithLabel[1].Value;
 
-    // Si el modelo no es válido, simplemente devolver la vista con los errores
-    return View("Registro");
-}
+            // Clasificar el comentario basado en la etiqueta y la puntuación
+            // Clasificar el comentario basado en las puntuaciones de las etiquetas
+            string clasificacionComentario = scoreValueFirst > scoreValueSecond ? (scoreKeyFirst == "1" ? "Positivo" : "Negativo") : (scoreKeySecond == "1" ? "Positivo" : "Negativo");
+            double porcentaje = scoreValueFirst > scoreValueSecond ? scoreValueFirst : scoreValueSecond;
+
+
+            // Mostrar en la consola si el comentario fue clasificado como positivo o negativo
+            Console.WriteLine($"Comentario: {Comentario}");
+            Console.WriteLine($"Clasificación: {clasificacionComentario}");
+            Console.WriteLine($"Porcentaje: {porcentaje * 100}%");
+            Console.WriteLine($"Primer Etiqueta: {scoreKeyFirst,-40} Puntuación: {scoreValueFirst,-20}");
+            Console.WriteLine($"Segunda Etiqueta: {scoreKeySecond,-40} Puntuación: {scoreValueSecond,-20}");
+
+            if (ModelState.IsValid)
+            {
+                var nuevoContacto = new Contacto
+                {
+                    Nombre = Nombre,
+                    Correo = Correo,
+                    Celular = Celular,
+                    Comentario = Comentario,
+                    Category = clasificacionComentario
+                };
+
+                _context.DataContacto.Add(nuevoContacto);
+                await _context.SaveChangesAsync();
+
+                // Enviar email de confirmación
+                try
+                {
+                    await _emailSender.SendEmailAsync(
+                        Correo,
+                        "Confirmación de Registro de Contacto - USMP",
+                        clasificacionComentario
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Log el error pero no interrumpir el flujo
+                    _logger.LogError(ex, "Error al enviar email de confirmación");
+                }
+
+                return RedirectToAction("Registro");
+            }
+
+            return View("Registro");
+        }
 
 
         [HttpGet("error")] // Agregar este atributo
