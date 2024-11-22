@@ -116,7 +116,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("SubCategoriasIdSubCategoria");
 
-                    b.ToTable("CertificadoSubCategoria", (string)null);
+                    b.ToTable("CertificadoSubCategoria");
                 });
 
             modelBuilder.Entity("EventoInscripcion", b =>
@@ -605,7 +605,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
                         .IsRequired()
@@ -681,7 +681,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
                         .IsRequired()
@@ -1107,7 +1107,7 @@ namespace USMPWEB.Data.Migrations
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
                         .WithMany()
                         .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Categoria");
@@ -1118,7 +1118,7 @@ namespace USMPWEB.Data.Migrations
                     b.HasOne("USMPWEB.Models.Categoria", "Categoria")
                         .WithMany()
                         .HasForeignKey("CategoriaId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Categoria");
