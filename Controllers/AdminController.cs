@@ -198,27 +198,27 @@ namespace USMPWEB.Controllers
                 }
 
                 using (var transaction = await _context.Database.BeginTransactionAsync())
-                try
-                {
-                    // Limpiar el contexto
-                    _context.ChangeTracker.Clear();
-
-                    // Crear nuevo evento
-                    var nuevoEvento = new EventosInscripciones
+                    try
                     {
-                        Titulo = eventosInscripciones.Titulo,
-                        Descripcion = eventosInscripciones.Descripcion,
-                        Vacantes = eventosInscripciones.Vacantes,
-                        Culminado = eventosInscripciones.Culminado,
-                        CategoriaId = eventosInscripciones.CategoriaId,
-                        Imagen = eventosInscripciones.Imagen,
-                        FechaInicio = eventosInscripciones.FechaInicio,
-                        FechaFin = eventosInscripciones.FechaFin,
-                        Requisitos = eventosInscripciones.Requisitos,
-                        Monto = eventosInscripciones.Monto
-                    };
+                        // Limpiar el contexto
+                        _context.ChangeTracker.Clear();
 
-                    // Obtener las subcategorías
+                        // Crear nuevo evento
+                        var nuevoEvento = new EventosInscripciones
+                        {
+                            Titulo = eventosInscripciones.Titulo,
+                            Descripcion = eventosInscripciones.Descripcion,
+                            Vacantes = eventosInscripciones.Vacantes,
+                            Culminado = eventosInscripciones.Culminado,
+                            CategoriaId = eventosInscripciones.CategoriaId,
+                            Imagen = eventosInscripciones.Imagen,
+                            FechaInicio = eventosInscripciones.FechaInicio,
+                            FechaFin = eventosInscripciones.FechaFin,
+                            Requisitos = eventosInscripciones.Requisitos,
+                            Monto = eventosInscripciones.Monto
+                        };
+
+                        // Obtener las subcategorías
                         if (eventosInscripciones.SubCategoriaIds?.Any() == true)
                         {
                             var subcategorias = await _context.DataSubCategoria
@@ -227,19 +227,19 @@ namespace USMPWEB.Controllers
                             nuevoEvento.SubCategorias = subcategorias;
                         }
 
-                    // Agregar y guardar
-                    await _context.DataEventosInscripciones.AddAsync(nuevoEvento);
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
+                        // Agregar y guardar
+                        await _context.DataEventosInscripciones.AddAsync(nuevoEvento);
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
 
-                    TempData["Mensaje"] = "Evento creado correctamente";
-                    return RedirectToAction(nameof(EventosInscripciones));
-                }
-                catch (Exception)
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
+                        TempData["Mensaje"] = "Evento creado correctamente";
+                        return RedirectToAction(nameof(EventosInscripciones));
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        throw;
+                    }
             }
             catch (Exception ex)
             {
@@ -391,27 +391,60 @@ namespace USMPWEB.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    // Recargar las listas para el formulario
                     ViewBag.Categoria = await _context.DataCategoria.ToListAsync();
                     ViewBag.SubCategoria = await _context.DataSubCategoria.ToListAsync();
                     return View(campana);
                 }
 
-                // Obtener las subcategorías
-                var subcategorias = await _context.DataSubCategoria
-                    .Where(s => campana.SubCategoriaIds.Contains(s.IdSubCategoria))
-                    .ToListAsync();
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // Desactivar temporalmente la detección de cambios
+                        _context.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                campana.SubCategorias = subcategorias;
+                        // Crear nueva campaña sin ID
+                        var nuevaCampana = new Campanas
+                        {
+                            Titulo = campana.Titulo,
+                            Descripcion = campana.Descripcion,
+                            Requisitos = campana.Requisitos,
+                            Monto = campana.Monto,
+                            CategoriaId = campana.CategoriaId,
+                            Imagen = campana.Imagen,
+                            FechaInicio = campana.FechaInicio,
+                            FechaFin = campana.FechaFin
+                        };
 
-                // Asegurarnos que el Id sea 0
-                campana.Id = 0;
+                        // Obtener y asignar las subcategorías
+                        if (campana.SubCategoriaIds?.Any() == true)
+                        {
+                            var subcategorias = await _context.DataSubCategoria
+                                .Where(s => campana.SubCategoriaIds.Contains(s.IdSubCategoria))
+                                .ToListAsync();
+                            nuevaCampana.SubCategorias = subcategorias;
+                        }
 
-                await _context.DataCampanas.AddAsync(campana);
-                await _context.SaveChangesAsync();
+                        // Agregar la nueva campaña
+                        _context.DataCampanas.Add(nuevaCampana);
 
-                TempData["Mensaje"] = "Campaña creada correctamente";
-                return RedirectToAction(nameof(Campanas));
+                        // Reactivar la detección de cambios antes de guardar
+                        _context.ChangeTracker.AutoDetectChangesEnabled = true;
+                        _context.ChangeTracker.DetectChanges();
+
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        TempData["Mensaje"] = "Campaña creada correctamente";
+                        return RedirectToAction(nameof(Campanas));
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync();
+                        _logger.LogError(ex, "Error al crear la campaña durante la transacción");
+                        throw;
+                    }
+                }
             }
             catch (Exception ex)
             {
