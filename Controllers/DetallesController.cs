@@ -140,7 +140,10 @@ namespace USMPWEB.Controllers
                     return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
                 }
 
-                // Crear la inscripción
+                // Limpiar el tracking del contexto
+                _context.ChangeTracker.Clear();
+
+                // Crear la inscripción sin especificar el ID
                 var inscripcion = new CertificadoInscripcion
                 {
                     CertificadoId = CertificadoId,
@@ -160,21 +163,10 @@ namespace USMPWEB.Controllers
                 };
 
                 // Agregar y guardar la inscripción
-                _logger.LogInformation("Guardando inscripción en la base de datos");
-                _context.CertificadoInscripciones.Add(inscripcion);
+                await _context.CertificadoInscripciones.AddAsync(inscripcion);
+                await _context.SaveChangesAsync();
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation($"Inscripción guardada con ID: {inscripcion.Id}");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error al guardar en la base de datos");
-                    throw;
-                }
-
-                // Crear el recibo
+                // Crear el recibo con todos los datos necesarios
                 var recibo = new ReciboViewModel
                 {
                     InscripcionId = inscripcion.Id,
@@ -194,9 +186,21 @@ namespace USMPWEB.Controllers
                     TipoInscripcion = "Certificado"
                 };
 
-                recibo.GenerarQR();
+                try
+                {
+                    // Asegurarse de que el número de recibo existe antes de generar el QR
+                    if (string.IsNullOrEmpty(recibo.NumeroRecibo))
+                    {
+                        recibo.NumeroRecibo = $"CERT-{DateTime.Now:yyyyMMddHHmmss}-{inscripcion.Id}";
+                    }
+                    recibo.GenerarQR();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al generar el código QR");
+                    // Continuar sin el QR si hay error
+                }
 
-                // Serializar y guardar en TempData
                 var options = new JsonSerializerOptions
                 {
                     ReferenceHandler = ReferenceHandler.IgnoreCycles,
@@ -214,7 +218,6 @@ namespace USMPWEB.Controllers
                 return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
             }
         }
-
         [HttpPost]
         public async Task<IActionResult> InscribirEvento(
     string Nombres,

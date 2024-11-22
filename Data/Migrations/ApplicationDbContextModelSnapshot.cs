@@ -40,6 +40,7 @@ namespace USMPWEB.Data.Migrations
             modelBuilder.Entity("CertificadoInscripcion", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("Id");
 

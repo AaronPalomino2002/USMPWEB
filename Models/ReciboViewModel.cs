@@ -23,16 +23,33 @@ namespace USMPWEB.Models
         public Certificados? Certificado { get; set; }
         public EventosInscripciones? Evento { get; set; }
         // Agregar propiedad para identificar el tipo
-        public string? TipoInscripcion { get; set; } 
+        public string? TipoInscripcion { get; set; }
         public string? Estado { get; set; }
         public string? QRCodeImage { get; set; }
         public void GenerarQR()
         {
-            using var qrGenerator = new QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(NumeroRecibo, QRCodeGenerator.ECCLevel.Q);
-            var qrCode = new PngByteQRCode(qrCodeData);
-            var qrCodeImage = qrCode.GetGraphic(20);
-            QRCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}";
+            try
+            {
+                if (string.IsNullOrEmpty(NumeroRecibo))
+                {
+                    // Si no hay número de recibo, usar otro identificador único
+                    NumeroRecibo = $"REC-{DateTime.Now:yyyyMMddHHmmss}-{InscripcionId}";
+                }
+
+                using var qrGenerator = new QRCodeGenerator();
+                // Crear un texto que incluya más información para el QR
+                var qrText = $"Recibo:{NumeroRecibo}|ID:{InscripcionId}|Fecha:{FechaInscripcion:yyyy-MM-dd}";
+                var qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
+                var qrCode = new PngByteQRCode(qrCodeData);
+                var qrCodeImage = qrCode.GetGraphic(20);
+                QRCodeImage = $"data:image/png;base64,{Convert.ToBase64String(qrCodeImage)}";
+            }
+            catch (Exception ex)
+            {
+                // En caso de error, establecer una imagen por defecto o manejar el error
+                QRCodeImage = null;
+                // Podrías loggear el error si tienes acceso a un logger
+            }
         }
     }
 }
