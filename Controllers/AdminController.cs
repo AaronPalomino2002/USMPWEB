@@ -181,18 +181,8 @@ namespace USMPWEB.Controllers
                     Text = c.nomCategoria
                 }).ToListAsync();
 
-            ViewBag.SubCategorias = await _context.DataSubCategoria
-                .Select(s => new SelectListItem
-                {
-                    Value = s.IdSubCategoria.ToString(),
-                    Text = s.nomSubCategoria
-                }).ToListAsync();
-
-            // Establecer valor por defecto de Culminado a "No"
-            var evento = new EventosInscripciones
-            {
-                Culminado = "No"
-            };
+            // Cargar subcategorías directamente, no como SelectListItems
+            ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
 
             return View();
         }
@@ -201,48 +191,64 @@ namespace USMPWEB.Controllers
         {
             try
             {
-                // Asegurarnos que el ID sea 0 para que PostgreSQL lo genere
-                eventosInscripciones.Id = 0;
+                if (!ModelState.IsValid)
+                {
+                    await PrepararViewBags();
+                    return View(eventosInscripciones);
+                }
 
-                // Desactivar el tracking para evitar problemas de entidad
-                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                try
+                {
+                    // Limpiar el contexto
+                    _context.ChangeTracker.Clear();
 
-                eventosInscripciones.Culminado = eventosInscripciones.Culminado == "true" ? "Si" : "No";
+                    // Crear nuevo evento
+                    var nuevoEvento = new EventosInscripciones
+                    {
+                        Titulo = eventosInscripciones.Titulo,
+                        Descripcion = eventosInscripciones.Descripcion,
+                        Vacantes = eventosInscripciones.Vacantes,
+                        Culminado = eventosInscripciones.Culminado,
+                        CategoriaId = eventosInscripciones.CategoriaId,
+                        Imagen = eventosInscripciones.Imagen,
+                        FechaInicio = eventosInscripciones.FechaInicio,
+                        FechaFin = eventosInscripciones.FechaFin,
+                        Requisitos = eventosInscripciones.Requisitos,
+                        Monto = eventosInscripciones.Monto
+                    };
 
-                // Agregar el nuevo evento
-                var entry = _context.DataEventosInscripciones.Add(eventosInscripciones);
+                    // Obtener las subcategorías
+                        if (eventosInscripciones.SubCategoriaIds?.Any() == true)
+                        {
+                            var subcategorias = await _context.DataSubCategoria
+                                .Where(s => eventosInscripciones.SubCategoriaIds.Contains(s.IdSubCategoria))
+                                .ToListAsync();
+                            nuevoEvento.SubCategorias = subcategorias;
+                        }
 
-                // Marcar el ID como generado por la base de datos
-                entry.Property(e => e.Id).IsTemporary = true;
+                    // Agregar y guardar
+                    await _context.DataEventosInscripciones.AddAsync(nuevoEvento);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
 
-                await _context.SaveChangesAsync();
-
-                TempData["Mensaje"] = "Evento creado correctamente";
-                return RedirectToAction(nameof(EventosInscripciones));
+                    TempData["Mensaje"] = "Evento creado correctamente";
+                    return RedirectToAction(nameof(EventosInscripciones));
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
             catch (Exception ex)
             {
-                // Log del error completo
-                _logger.LogError(ex, "Error completo al crear evento: {Message}", ex.ToString());
-
-                ViewBag.Categorias = await _context.DataCategoria
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.IdCategoria.ToString(),
-                        Text = c.nomCategoria
-                    }).ToListAsync();
-                ViewBag.SubCategorias = await _context.DataSubCategoria
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.IdSubCategoria.ToString(),
-                        Text = s.nomSubCategoria
-                    }).ToListAsync();
-
-                TempData["Error"] = $"Error al crear el evento: {ex.Message}. Inner Exception: {ex.InnerException?.Message}";
+                _logger.LogError(ex, "Error al crear evento");
+                await PrepararViewBags();
+                TempData["Error"] = $"Error al crear el evento: {ex.Message}";
                 return View(eventosInscripciones);
             }
         }
-
         [HttpGet]
         public async Task<IActionResult> EditarEventoInscripcion(long id)
         {
@@ -252,30 +258,17 @@ namespace USMPWEB.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (eventoInscripcion == null)
-            {
                 return NotFound();
-            }
 
-            // Cargar los dropdowns
-            ViewBag.Categorias = await _context.DataCategoria
-                .Select(c => new SelectListItem
-                {
-                    Value = c.IdCategoria.ToString(),
-                    Text = c.nomCategoria
-                }).ToListAsync();
-
-            ViewBag.SubCategorias = await _context.DataSubCategoria
-                .Select(s => new SelectListItem
-                {
-                    Value = s.IdSubCategoria.ToString(),
-                    Text = s.nomSubCategoria
-                }).ToListAsync();
+            // Cargar subcategorías directamente, no como SelectListItems
+            ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
+            ViewBag.Categorias = new SelectList(await _context.DataCategoria.ToListAsync(), "IdCategoria", "nomCategoria");
 
             return View(eventoInscripcion);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditarEventoInscripcion(long id, EventosInscripciones eventosInscripciones)
+        public async Task<IActionResult> EditarEventoInscripcion(long id, EventosInscripciones eventosInscripciones, List<long> SubCategoriaIds)
         {
             if (id != eventosInscripciones.Id)
             {
@@ -285,6 +278,7 @@ namespace USMPWEB.Controllers
             try
             {
                 var eventoExistente = await _context.DataEventosInscripciones
+                    .Include(c => c.SubCategorias)
                     .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (eventoExistente == null)
@@ -298,11 +292,21 @@ namespace USMPWEB.Controllers
                 eventoExistente.Vacantes = eventosInscripciones.Vacantes;
                 eventoExistente.Culminado = eventosInscripciones.CulminadoCheckbox ? "Si" : "No";
                 eventoExistente.CategoriaId = eventosInscripciones.CategoriaId;
-                eventoExistente.SubCategoriaIds = eventosInscripciones.SubCategoriaIds;
+
                 eventoExistente.Imagen = eventosInscripciones.Imagen;
                 eventoExistente.FechaInicio = eventosInscripciones.FechaInicio;
                 eventoExistente.FechaFin = eventosInscripciones.FechaFin;
-
+                eventoExistente.Requisitos = eventosInscripciones.Requisitos;
+                eventoExistente.Monto = eventosInscripciones.Monto;
+                // Actualizar subcategorías
+                eventoExistente.SubCategorias.Clear();
+                var subcategoriasSeleccionadas = await _context.DataSubCategoria
+                    .Where(s => SubCategoriaIds.Contains(s.IdSubCategoria))
+                    .ToListAsync();
+                foreach (var subcat in subcategoriasSeleccionadas)
+                {
+                    eventoExistente.SubCategorias.Add(subcat);
+                }
                 await _context.SaveChangesAsync();
                 TempData["Mensaje"] = "Evento actualizado correctamente";
                 return RedirectToAction(nameof(EventosInscripciones));
@@ -310,6 +314,8 @@ namespace USMPWEB.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al actualizar el evento: " + ex.Message;
+                ViewBag.Categorias = await _context.DataCategoria.ToListAsync();
+                ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
                 return View(eventosInscripciones);
             }
         }
@@ -664,92 +670,106 @@ namespace USMPWEB.Controllers
                     Text = c.nomCategoria
                 }).ToListAsync();
 
-            ViewBag.SubCategorias = await _context.DataSubCategoria
-                .Select(s => new SelectListItem
-                {
-                    Value = s.IdSubCategoria.ToString(),
-                    Text = s.nomSubCategoria
-                }).ToListAsync();
+            // Cargar subcategorías directamente, no como SelectListItems
+            ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
 
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> CrearCertificado(Certificados certificado)
         {
             try
             {
-                // Asegurarnos que el ID sea 0 para que PostgreSQL lo genere
-                certificado.Id = 0;
+                // Validaciones
+                if (!ModelState.IsValid ||
+                    certificado.FechaFin < certificado.FechaInicio ||
+                    certificado.SubCategoriaIds == null ||
+                    certificado.SubCategoriaIds.Count < 1 ||
+                    certificado.SubCategoriaIds.Count > 3)
+                {
+                    await PrepararViewBags();
+                    return View(certificado);
+                }
 
-                _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // Limpiar el contexto y tracking
+                        _context.ChangeTracker.Clear();
 
+                        // Crear nuevo certificado
+                        var nuevoCertificado = new Certificados
+                        {
+                            NombreCertificado = certificado.NombreCertificado,
+                            Descripcion = certificado.Descripcion,
+                            Requisitos = certificado.Requisitos,
+                            CategoriaId = certificado.CategoriaId,
+                            Imagen = certificado.Imagen,
+                            FechaInicio = certificado.FechaInicio,
+                            FechaFin = certificado.FechaFin,
+                            Monto = certificado.Monto,
+                            FechaExpedicion = certificado.FechaExpedicion
+                        };
 
-                // Agregar el nuevo evento
-                var entry = _context.DataCertificados.Add(certificado);
+                        // Obtener las subcategorías
+                        if (certificado.SubCategoriaIds?.Any() == true)
+                        {
+                            var subcategorias = await _context.DataSubCategoria
+                                .Where(s => certificado.SubCategoriaIds.Contains(s.IdSubCategoria))
+                                .ToListAsync();
+                            nuevoCertificado.SubCategorias = subcategorias;
+                        }
 
-                // Marcar el ID como generado por la base de datos
-                entry.Property(e => e.Id).IsTemporary = true;
+                        // Agregar y guardar
+                        _context.DataCertificados.Add(nuevoCertificado);
+                        await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
 
-                await _context.SaveChangesAsync();
-
-                TempData["Mensaje"] = "Certificado creado correctamente";
-                return RedirectToAction(nameof(Certificados));
+                        TempData["Mensaje"] = "Certificado creado correctamente";
+                        return RedirectToAction(nameof(Certificados));
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        throw;
+                    }
+                }
             }
             catch (Exception ex)
             {
-                // Log del error completo
-                _logger.LogError(ex, "Error completo al crear evento: {Message}", ex.ToString());
-
-                ViewBag.Categorias = await _context.DataCategoria
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.IdCategoria.ToString(),
-                        Text = c.nomCategoria
-                    }).ToListAsync();
-                ViewBag.SubCategorias = await _context.DataSubCategoria
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.IdSubCategoria.ToString(),
-                        Text = s.nomSubCategoria
-                    }).ToListAsync();
-
-                TempData["Error"] = $"Error al crear el certificado: {ex.Message}. Inner Exception: {ex.InnerException?.Message}";
+                _logger.LogError(ex, "Error al crear certificado");
+                await PrepararViewBags();
+                TempData["Error"] = $"Error al crear el certificado: {ex.Message}";
                 return View(certificado);
             }
+        }
+
+        private async Task PrepararViewBags()
+        {
+            ViewBag.Categorias = new SelectList(await _context.DataCategoria.ToListAsync(), "IdCategoria", "nomCategoria");
+            ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
         }
         [HttpGet]
         public async Task<IActionResult> EditarCertificado(long id)
         {
             var certificado = await _context.DataCertificados
-                .Include(c => c.Categoria)
-                .Include(c => c.SubCategorias)
-                .FirstOrDefaultAsync(c => c.Id == id);
+               .Include(c => c.Categoria)
+               .Include(c => c.SubCategorias)
+               .FirstOrDefaultAsync(c => c.Id == id);
 
             if (certificado == null)
-            {
                 return NotFound();
-            }
 
-            ViewBag.Categorias = await _context.DataCategoria
-                .Select(c => new SelectListItem
-                {
-                    Value = c.IdCategoria.ToString(),
-                    Text = c.nomCategoria
-                }).ToListAsync();
-
-            ViewBag.SubCategorias = await _context.DataSubCategoria
-                .Select(s => new SelectListItem
-                {
-                    Value = s.IdSubCategoria.ToString(),
-                    Text = s.nomSubCategoria
-                }).ToListAsync();
+            // Cargar subcategorías directamente, no como SelectListItems
+            ViewBag.SubCategorias = await _context.DataSubCategoria.ToListAsync();
+            ViewBag.Categorias = new SelectList(await _context.DataCategoria.ToListAsync(), "IdCategoria", "nomCategoria");
 
             return View(certificado);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditarCertificado(long id, Certificados certificado)
+        public async Task<IActionResult> EditarCertificado(long id, Certificados certificado, List<long> SubCategoriaIds)
         {
             if (id != certificado.Id)
             {
@@ -759,6 +779,7 @@ namespace USMPWEB.Controllers
             try
             {
                 var certificadoExistente = await _context.DataCertificados
+                    .Include(c => c.SubCategorias)
                     .FirstOrDefaultAsync(c => c.Id == id);
 
                 if (certificadoExistente == null)
@@ -768,13 +789,23 @@ namespace USMPWEB.Controllers
 
                 certificadoExistente.NombreCertificado = certificado.NombreCertificado;
                 certificadoExistente.Descripcion = certificado.Descripcion;
+                certificadoExistente.Requisitos = certificado.Requisitos;
                 certificadoExistente.CategoriaId = certificado.CategoriaId;
-                certificadoExistente.SubCategoriaIds = certificado.SubCategoriaIds;
                 certificadoExistente.Imagen = certificado.Imagen;
                 certificadoExistente.FechaInicio = certificado.FechaInicio;
                 certificadoExistente.FechaFin = certificado.FechaFin;
+                certificadoExistente.Monto = certificado.Monto;
                 certificadoExistente.FechaExpedicion = certificado.FechaExpedicion;
 
+                // Actualizar subcategorías
+                certificadoExistente.SubCategorias.Clear();
+                var subcategoriasSeleccionadas = await _context.DataSubCategoria
+                    .Where(s => SubCategoriaIds.Contains(s.IdSubCategoria))
+                    .ToListAsync();
+                foreach (var subcat in subcategoriasSeleccionadas)
+                {
+                    certificadoExistente.SubCategorias.Add(subcat);
+                }
                 await _context.SaveChangesAsync();
                 TempData["Mensaje"] = "Certificado actualizado correctamente";
                 return RedirectToAction(nameof(Certificados));
@@ -782,19 +813,6 @@ namespace USMPWEB.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = "Error al actualizar el certificado: " + ex.Message;
-                // Recargar los dropdowns
-                ViewBag.Categorias = await _context.DataCategoria
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.IdCategoria.ToString(),
-                        Text = c.nomCategoria
-                    }).ToListAsync();
-                ViewBag.SubCategorias = await _context.DataSubCategoria
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.IdSubCategoria.ToString(),
-                        Text = s.nomSubCategoria
-                    }).ToListAsync();
                 return View(certificado);
             }
         }

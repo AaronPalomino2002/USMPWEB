@@ -23,7 +23,7 @@ namespace USMPWEB.Models
         public Certificados? Certificado { get; set; }
         public EventosInscripciones? Evento { get; set; }
         // Agregar propiedad para identificar el tipo
-        public string? TipoInscripcion { get; set; } // "Campana" o "Certificado"
+        public string? TipoInscripcion { get; set; } 
         public string? Estado { get; set; }
         public string? QRCodeImage { get; set; }
         public void GenerarQR()

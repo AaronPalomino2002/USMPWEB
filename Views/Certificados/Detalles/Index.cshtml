@@ -45,12 +45,15 @@
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="uneteModalLabel">Inscripción al Certificado</h5>
+                    <h5 class="modal-title" id="uneteModalLabel">Inscripción al Certificado
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <form method="post" asp-controller="Detalles" asp-action="InscribirCertificado">
+                    <p>Ingresa tus datos para obtener el certificado.</p>
+                    <form method="post" asp-controller="Detalles" asp-action="InscribirCertificados">
                       <input type="hidden" name="CertificadoId" value="@Model.Id" />
+                      <input type="hidden" name="Monto" value="@Model.Monto" />
 
                       <div class="mb-1">
                         <label for="Nombres" class="form-label">Nombres</label>
@@ -85,7 +88,7 @@
                         <input type="email" class="form-control" id="Email" name="Email" required>
                       </div>
                       <div class="mb-1">
-                        <label class="form-label">Monto: S/. 90.00</label>
+                        <label class="form-label">Monto: S/. @Model.Monto.ToString("N2")</label>
                       </div>
                       <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="AceptoTerminos" name="AceptoTerminos"
@@ -96,6 +99,19 @@
                       </div>
                       <button type="submit" class="btn btn-primary">Inscribirse</button>
                     </form>
+                    @if (TempData["Success"] != null)
+                    {
+                      <div class="alert alert-success mt-3">
+                        @TempData["Success"]
+                      </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                      <div class="alert alert-danger mt-3">
+                        @TempData["Error"]
+                      </div>
+                    }
                   </div>
                 </div>
               </div>

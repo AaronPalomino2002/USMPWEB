@@ -46,13 +46,13 @@
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="uneteModalLabel">Únete a nuestra Campaña</h5>
+                    <h5 class="modal-title" id="uneteModalLabel">Únete a nuestros Eventos</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <!-- Contenido del modal -->
                     <p>Ingresa tus datos para unirte.</p>
-                    <form method="post" asp-controller="Detalles" asp-action="Inscribirse">
+                    <form method="post" asp-controller="Detalles" asp-action="InscribirEvento">
                       <input type="hidden" name="CampanaId" value="@Model.Id" />
 
                       <div class="mb-1">
@@ -87,9 +87,9 @@
                         <label for="Email" class="form-label">Correo Electrónico</label>
                         <input type="email" class="form-control" id="Email" name="Email" required>
                       </div>
-                      @* <div class="mb-1">
+                      <div class="mb-1">
                         <label class="form-label">Monto: S/. @Model.Monto.ToString("N2")</label>
-                      </div> *@
+                      </div>
                       <div class="form-check mb-3">
                         <input type="checkbox" class="form-check-input" id="AceptoTerminos" name="AceptoTerminos"
                           value="true" required>

@@ -2,9 +2,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using USMPWEB.Models;
 
+[Table("t_certificado_inscripciones")]
 public class CertificadoInscripcion
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public int Id { get; set; }
     
     [Required]

@@ -61,52 +61,56 @@ public class ApplicationDbContext : IdentityDbContext
                     });
         });
         modelBuilder.Entity<EventosInscripciones>(entity =>
-        {
-            // Configura la tabla y la clave primaria
-            entity.ToTable("t_eventosInscripciones");
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).UseIdentityColumn();
+            {
+                entity.ToTable("t_eventosInscripciones");
+                entity.HasKey(e => e.Id);
 
+                entity.Property(e => e.Id)
+                    .UseIdentityAlwaysColumn();
 
-            entity.Property(e => e.Requisitos)
-                .IsRequired();
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
-            // Mantén la configuración existente de la relación muchos a muchos
-            entity.HasMany(c => c.SubCategorias)
-                .WithMany(s => s.EventosInscripciones)
-                .UsingEntity(
-                    "EventoSubCategoria",
-                    l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
-                    r => r.HasOne(typeof(EventosInscripciones)).WithMany().HasForeignKey("EventosInscripcionesId"),
-                    j =>
-                    {
-                        j.HasKey("EventosInscripcionesId", "SubCategoriasIdSubCategoria");
-                        j.ToTable("EventoSubCategoria");
-                    });
-        });
+                entity.HasOne(c => c.Categoria)
+                    .WithMany()
+                    .HasForeignKey(c => c.CategoriaId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasMany(c => c.SubCategorias)
+                    .WithMany(s => s.EventosInscripciones)
+                    .UsingEntity(
+                        "EventoSubCategoria",
+                        l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
+                        r => r.HasOne(typeof(EventosInscripciones)).WithMany().HasForeignKey("EventosInscripcionesId"),
+                        j => j.HasKey("EventosInscripcionesId", "SubCategoriasIdSubCategoria")
+                    );
+            });
         modelBuilder.Entity<Certificados>(entity =>
             {
                 entity.ToTable("t_certificados");
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).UseIdentityColumn(); // Asegúrate de que esté presente
 
-                 entity.Property(e => e.Requisitos)
-                .IsRequired();
+                entity.Property(e => e.Id)
+                    .UseIdentityAlwaysColumn();
 
-            // Mantén la configuración existente de la relación muchos a muchos
-            entity.HasMany(c => c.SubCategorias)
-                .WithMany(s => s.Certificados)
-                .UsingEntity(
-                    "CertificadoSubCategoria",
-                    l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
-                    r => r.HasOne(typeof(Certificados)).WithMany().HasForeignKey("CertificadosId"),
-                    j =>
-                    {
-                        j.HasKey("CertificadosId", "SubCategoriasIdSubCategoria");
-                        j.ToTable("CertificadoSubCategoria");
-                    });
+                entity.Property(e => e.Monto)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
 
+                entity.HasOne(c => c.Categoria)
+                    .WithMany()
+                    .HasForeignKey(c => c.CategoriaId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
+                entity.HasMany(c => c.SubCategorias)
+                    .WithMany(s => s.Certificados)
+                    .UsingEntity(
+                        "CertificadoSubCategoria",
+                        l => l.HasOne(typeof(SubCategoria)).WithMany().HasForeignKey("SubCategoriasIdSubCategoria"),
+                        r => r.HasOne(typeof(Certificados)).WithMany().HasForeignKey("CertificadosId"),
+                        j => j.HasKey("CertificadosId", "SubCategoriasIdSubCategoria")
+                    );
             });
         // Resto de tus configuraciones existentes
         modelBuilder.Entity<CampanaInscripcion>(entity =>
@@ -136,9 +140,25 @@ public class ApplicationDbContext : IdentityDbContext
             .Property(p => p.NumeroRecibo)
             .HasMaxLength(50);
 
-        modelBuilder.Entity<CertificadoInscripcion>()
-            .HasOne(ci => ci.Certificado)
-            .WithMany()
-            .HasForeignKey(ci => ci.CertificadoId);
+        modelBuilder.Entity<CertificadoInscripcion>(entity =>
+            {
+                entity.ToTable("t_certificado_inscripciones");
+                entity.HasKey(e => e.Id);
+
+                // Modificado para usar serial
+                entity.Property(e => e.Id)
+                    .HasColumnName("Id")
+                    .UseSerialColumn();
+
+                entity.HasOne(d => d.Certificado)
+                    .WithMany()
+                    .HasForeignKey(d => d.CertificadoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                // Agregar otras configuraciones de propiedades si es necesario
+                entity.Property(e => e.NumeroRecibo)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
     }
 }
