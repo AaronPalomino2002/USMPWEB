@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -37,8 +38,8 @@ namespace USMPWEB.Controllers
 
         public async Task<IActionResult> Index(int id, string tipo)
         {
-              ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
-        
+            ViewData["CurrentDateTime"] = DateTime.Now.ToString("h:mm tt - d MMMM yyyy");
+
             try
             {
                 if (string.IsNullOrEmpty(tipo))
@@ -110,20 +111,23 @@ namespace USMPWEB.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InscribirCertificado(
-            string Nombres,
-            string Apellidos,
-            string Matricula,
-            string Facultad,
-            string Carrera,
-            string Direccion,
-            string Telefono,
-            string Email,
-            int CertificadoId,
-            bool AceptoTerminos)
+        public async Task<IActionResult> InscribirCertificados(
+    string Nombres,
+    string Apellidos,
+    string Matricula,
+    string Facultad,
+    string Carrera,
+    string Direccion,
+    string Telefono,
+    string Email,
+    long CertificadoId,
+    bool AceptoTerminos)
         {
             try
             {
+                _logger.LogInformation($"Iniciando inscripción para certificado {CertificadoId}");
+
+                // Verificar que el certificado existe
                 var certificado = await _context.DataCertificados
                     .Include(c => c.Categoria)
                     .Include(c => c.SubCategorias)
@@ -131,6 +135,7 @@ namespace USMPWEB.Controllers
 
                 if (certificado == null)
                 {
+                    _logger.LogWarning($"Certificado {CertificadoId} no encontrado");
                     TempData["Error"] = "Certificado no encontrado";
                     return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
                 }
@@ -148,14 +153,26 @@ namespace USMPWEB.Controllers
                     Direccion = Direccion,
                     Telefono = Telefono,
                     Email = Email,
-                    Monto = 90.00M,
+                    Monto = certificado.Monto,
                     FechaInscripcion = DateTime.UtcNow,
                     Estado = "Pendiente",
                     AceptoTerminos = AceptoTerminos
                 };
 
+                // Agregar y guardar la inscripción
+                _logger.LogInformation("Guardando inscripción en la base de datos");
                 _context.CertificadoInscripciones.Add(inscripcion);
-                await _context.SaveChangesAsync();
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation($"Inscripción guardada con ID: {inscripcion.Id}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error al guardar en la base de datos");
+                    throw;
+                }
 
                 // Crear el recibo
                 var recibo = new ReciboViewModel
@@ -174,42 +191,30 @@ namespace USMPWEB.Controllers
                     FechaInscripcion = inscripcion.FechaInscripcion.ToLocalTime(),
                     Certificado = certificado,
                     Estado = inscripcion.Estado,
-                    TipoInscripcion = "Certificado" // Indicar que es una inscripción de certificado
+                    TipoInscripcion = "Certificado"
                 };
 
                 recibo.GenerarQR();
 
-                TempData["Recibo"] = JsonSerializer.Serialize(recibo);
-                return RedirectToAction("MostrarReciboCertificado", new { id = inscripcion.Id });
+                // Serializar y guardar en TempData
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.IgnoreCycles,
+                    WriteIndented = true
+                };
+
+                TempData["Recibo"] = JsonSerializer.Serialize(recibo, options);
+
+                return RedirectToAction(nameof(MostrarRecibo), new { id = inscripcion.Id });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al procesar la inscripción");
-                TempData["Error"] = "Ocurrió un error al procesar tu inscripción";
+                _logger.LogError(ex, "Error al procesar la inscripción del certificado");
+                TempData["Error"] = "Error al procesar la inscripción: " + ex.Message;
                 return RedirectToAction("Index", new { id = CertificadoId, tipo = "certificados" });
             }
         }
 
-        [HttpGet]
-        public IActionResult MostrarReciboCertificado(int id)
-        {
-            try
-            {
-                if (TempData["Recibo"] == null)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-
-                var recibo = JsonSerializer.Deserialize<ReciboViewModel>((string)TempData["Recibo"]);
-                return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", recibo);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al mostrar el recibo");
-                TempData["Error"] = "Ocurrió un error al mostrar el recibo";
-                return RedirectToAction("Index", "Home");
-            }
-        }
         [HttpPost]
         public async Task<IActionResult> InscribirEvento(
     string Nombres,
@@ -248,7 +253,7 @@ namespace USMPWEB.Controllers
                     Direccion = Direccion,
                     Telefono = Telefono,
                     Email = Email,
-                    Monto = 90.00M,
+                    Monto = evento.Monto,
                     FechaInscripcion = DateTime.UtcNow,
                     Estado = "Pendiente",
                     AceptoTerminos = AceptoTerminos
@@ -299,6 +304,7 @@ namespace USMPWEB.Controllers
             string Direccion,
             string Telefono,
             string Email,
+            Decimal Monto,
             int CampanaId,
             bool AceptoTerminos)
         {
@@ -329,7 +335,7 @@ namespace USMPWEB.Controllers
                     Direccion = Direccion,
                     Telefono = Telefono,
                     Email = Email,
-                    Monto = 90.00M,
+                    Monto = campana.Monto,
                     FechaInscripcion = DateTime.UtcNow,
                     Estado = "Pendiente",
                     AceptoTerminos = AceptoTerminos
@@ -376,17 +382,57 @@ namespace USMPWEB.Controllers
         }
 
         [HttpGet]
-        public IActionResult MostrarRecibo(int id)
+        public async Task<IActionResult> MostrarRecibo(int id)
         {
             try
             {
                 if (TempData["Recibo"] == null)
                 {
-                    return RedirectToAction("Index", "Home");
+                    // Intentar recuperar los datos de la base de datos
+                    var inscripcion = await _context.CertificadoInscripciones
+                        .Include(c => c.Certificado)
+                        .ThenInclude(c => c.Categoria)
+                        .FirstOrDefaultAsync(c => c.Id == id);
+
+                    if (inscripcion == null)
+                    {
+                        TempData["Error"] = "Inscripción no encontrada";
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    var recibo = new ReciboViewModel
+                    {
+                        InscripcionId = inscripcion.Id,
+                        NumeroRecibo = inscripcion.NumeroRecibo,
+                        Nombres = inscripcion.Nombres,
+                        Apellidos = inscripcion.Apellidos,
+                        Matricula = inscripcion.Matricula,
+                        Facultad = inscripcion.Facultad,
+                        Carrera = inscripcion.Carrera,
+                        Email = inscripcion.Email,
+                        Direccion = inscripcion.Direccion,
+                        Telefono = inscripcion.Telefono,
+                        Monto = inscripcion.Monto,
+                        FechaInscripcion = inscripcion.FechaInscripcion.ToLocalTime(),
+                        Certificado = inscripcion.Certificado,
+                        Estado = inscripcion.Estado,
+                        TipoInscripcion = "Certificado"
+                    };
+
+                    recibo.GenerarQR();
+
+                    return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", recibo);
                 }
 
-                var recibo = JsonSerializer.Deserialize<ReciboViewModel>((string)TempData["Recibo"]);
-                return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", recibo);
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve
+                };
+
+                var reciboFromTemp = JsonSerializer.Deserialize<ReciboViewModel>((string)TempData["Recibo"], options);
+                TempData.Keep("Recibo");
+
+                return View("~/Views/Home/Detalles/MostrarRecibo.cshtml", reciboFromTemp);
             }
             catch (Exception ex)
             {

@@ -40,10 +40,10 @@ namespace USMPWEB.Data.Migrations
             modelBuilder.Entity("CertificadoInscripcion", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AceptoTerminos")
                         .HasColumnType("boolean");
@@ -101,7 +101,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("CertificadoId");
 
-                    b.ToTable("CertificadoInscripciones");
+                    b.ToTable("t_certificado_inscripciones", (string)null);
                 });
 
             modelBuilder.Entity("CertificadoSubCategoria", b =>
@@ -122,10 +122,7 @@ namespace USMPWEB.Data.Migrations
             modelBuilder.Entity("EventoInscripcion", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("AceptoTerminos")
                         .HasColumnType("boolean");
@@ -183,7 +180,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("EventoId");
 
-                    b.ToTable("EventoInscripciones");
+                    b.ToTable("t_evento_inscripcion");
                 });
 
             modelBuilder.Entity("EventoSubCategoria", b =>
@@ -198,7 +195,7 @@ namespace USMPWEB.Data.Migrations
 
                     b.HasIndex("SubCategoriasIdSubCategoria");
 
-                    b.ToTable("EventoSubCategoria", (string)null);
+                    b.ToTable("EventoSubCategoria");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -608,7 +605,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
                         .IsRequired()
@@ -684,7 +681,7 @@ namespace USMPWEB.Data.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("Id");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("CategoriaId")
                         .IsRequired()
@@ -705,6 +702,9 @@ namespace USMPWEB.Data.Migrations
 
                     b.Property<string>("Imagen")
                         .HasColumnType("text");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Requisitos")
                         .IsRequired()
@@ -958,7 +958,6 @@ namespace USMPWEB.Data.Migrations
                     b.HasOne("USMPWEB.Models.Certificados", "Certificado")
                         .WithMany()
                         .HasForeignKey("CertificadoId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Certificado");
