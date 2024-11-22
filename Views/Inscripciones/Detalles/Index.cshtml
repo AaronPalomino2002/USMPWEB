@@ -120,16 +120,22 @@
             <p style="font-size: 11px">Cierre de Postulaciones </br> el @Model.FechaFin</p>
           </div>
         </div>
-        <div style="margin-top: 2rem" class="card">
+        <div class="card" style="margin-top: 1rem">
           <div class="card-body">
-            <h6>Sobre el Programa</h6>
+            <h6 style="font-weight: bolder;">Sobre el Programa</h6>
             <p>@Model.Descripcion</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h6 style="font-weight: bolder;">Vacantes</h6>
+            <p>@Model.Vacantes</p>
           </div>
         </div>
 
         <div class="card">
           <div class="card-body">
-            <h6>Requisitos e Indicaciones</h6>
+            <h6 style="font-weight: bolder;">Requisitos e Indicaciones</h6>
             <div style="font-size: 11px; padding: 0px">
               @Html.Raw(Model.Requisitos?.Replace("\n", "<br/>"))
             </div>

@@ -51,7 +51,6 @@ main {
   width: 100%;
   overflow-x: hidden;
   transition: all 0.35s ease-in-out;
-  padding: 20px;
   display: flex;
   flex-direction: column;
   min-height: calc(
@@ -198,6 +197,9 @@ body {
   display: flex;
   width: 150px;
   align-items: center;
+}
+.p-home {
+  padding: 20px;
 }
 .p-home__bg-primary {
   border: none;
